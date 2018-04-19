@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -9,11 +10,15 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 
 public class PaymentView extends JFrame implements ActionListener {
 	private JTextField tfPaymentNum, tfChang, tfTotalCash, tfReceiveCash, tfReturnCash;
 	private JLabel lbPaymentNum, lbTotalCash, lbReceiveCash, lbReturnCash;
 	private JButton btCashPayment, btCardPayment;
+	public JTable orderLIst;
+	
 
 	public void addLayout() {
 		getContentPane().setLayout(null);
@@ -21,6 +26,19 @@ public class PaymentView extends JFrame implements ActionListener {
 		JPanel panel = new JPanel();
 		panel.setBounds(14, 12, 268, 371);
 		getContentPane().add(panel);
+		panel.setLayout(null);
+		
+		JTextArea taOrderReceive = new JTextArea();
+		taOrderReceive.setBounds(14, 56, 240, 303);
+		panel.add(taOrderReceive);
+		
+		JLabel lblNewLabel = new JLabel("ㅎㅎㅎSushi 주문내역  ");
+		lblNewLabel.setBounds(14, 12, 240, 18);
+		panel.add(lblNewLabel);
+		
+		JLabel label = new JLabel("============================");
+		label.setBounds(14, 36, 240, 18);
+		panel.add(label);
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(287, 12, 268, 371);
@@ -86,24 +104,32 @@ public class PaymentView extends JFrame implements ActionListener {
 	public PaymentView() {
 		addLayout();
 		eventProc();
-		setSize(800, 600);
+		setSize(580, 450);
+		setResizable(false);
 		setVisible(true);
+		
 	}
 
 	public void actionPerformed(ActionEvent ev) {
 		Object evt = ev.getSource();
+		int total = 0; // 총 금액을 저장
+		int rece = 0; // 받은 금액을 문자열로 저장
+		int Rt = 0;
+		
 		if (evt == btCashPayment) {
-			int total = Integer.parseInt(tfTotalCash.getText());							//총 금액을 저장
-			int rece = Integer.parseInt(tfReceiveCash.getText());							//받은 금액을 문자열로 저장
-			int Rt = Integer.parseInt(tfReturnCash.getText());
-			Rt = rece - total;
-			JOptionPane.showMessageDialog(null, "총금액:"+total+"\n받은금액:"+rece+"\n잔돈:"+Rt);
-		}else if(evt == btCashPayment){
-			
-		}else if(evt ==  tfReceiveCash){
-			int total = Integer.parseInt(tfTotalCash.getText());
-			int rece = Integer.parseInt(tfReceiveCash.getText());
-			int Rt = rece - total;																//거슬러줄 금액
+			total = Integer.parseInt(tfTotalCash.getText()); // 총 금액을 저장
+			rece = Integer.parseInt(tfReceiveCash.getText()); // 받은 금액을 문자열로 저장
+			Rt = Integer.parseInt(tfReturnCash.getText());
+			JOptionPane.showMessageDialog(null, "총금액:" + total + "\n받은금액:" + rece + "\n잔돈:" + Rt);
+			tfTotalCash.setText(null); // 총 금액을 저장
+			tfReceiveCash.setText(null); // 받은 금액을 문자열로 저장
+			tfReturnCash.setText(null);
+			System.exit(0);
+			//setVisible(false);
+		} else if (evt == tfReceiveCash) {
+			total = Integer.parseInt(tfTotalCash.getText()); // 총 금액을 저장
+			rece = Integer.parseInt(tfReceiveCash.getText()); // 받은 금액을 문자열로 저장
+			Rt = rece - total; // 거슬러줄 금액
 			tfReturnCash.setText(String.valueOf(Rt));
 		}
 	}
@@ -111,5 +137,4 @@ public class PaymentView extends JFrame implements ActionListener {
 	public static void main(String[] args) {
 		new PaymentView();
 	}
-
 }
