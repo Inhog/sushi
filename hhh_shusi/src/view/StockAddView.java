@@ -32,7 +32,12 @@ public class StockAddView extends JDialog{
 	StockAddView(){
 		addLayout();
 		eventProc();	//이벤트 등록
+		dbConnection();
 		setSize(600, 500);
+	}
+	
+	void dbConnection(){
+		model = new StockModel();
 	}
 	
 	void addLayout(){
