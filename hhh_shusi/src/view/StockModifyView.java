@@ -15,7 +15,8 @@ public class StockModifyView extends JDialog{
 	JTable table;
 
 	StockTableModel tbModelStock;
-	JButton btnModifyStock; 
+	JButton btnModifyStock;
+	JButton btnDeleteStock; 
 	
 	
 	StockModel model;
@@ -30,24 +31,32 @@ public class StockModifyView extends JDialog{
 	void addLayout(){
 		
 		tbModelStock = new StockTableModel();
-		getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER));
 		
 		table = new JTable(tbModelStock);
 		JScrollPane scrollPane = new JScrollPane(table);
 		getContentPane().add(scrollPane);
 		
-		btnModifyStock = new JButton("New button");
+		btnModifyStock = new JButton("Modify");
+		btnDeleteStock  = new JButton("Delete");
 		
 		getContentPane().add(btnModifyStock);
+		getContentPane().add(btnDeleteStock);
 	}
 	
 	void eventProc(){
 		btnModifyStock.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				model.modify();
+				modify();
 			}
 		});
 	}
+	
+	void modify(){
+		model.modify();
+	}
+	
+	
 	
 //	public static void main(String agrs[]){
 //		new StockModifyView();

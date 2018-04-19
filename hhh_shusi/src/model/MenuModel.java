@@ -1,6 +1,6 @@
 package model;
 
-public class StockModel {
+public class MenuModel {
 
 	
 	//재고 입력
@@ -11,6 +11,7 @@ public class StockModel {
 	public void modify(){
 			
 	}
+	
 	public void delete(){
 		
 	}

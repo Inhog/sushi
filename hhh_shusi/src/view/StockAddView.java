@@ -88,9 +88,13 @@ public class StockAddView extends JDialog{
 	void eventProc(){
 		btnStockAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				model.insert();
+				insert();
 			}
 		});
+	}
+	
+	void insert(){
+		model.insert();
 	}
 	
 //	public static void main(String args[]){
