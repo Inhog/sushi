@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -14,9 +13,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.AbstractTableModel;
 
 public class StockView extends JFrame implements ActionListener {
+
 	JButton insertRoll, updateRoll, searchBtr;
 	JTextField stockCode, matName, matCode;
 	JLabel laStockCode, laMatName, laMatCode;
@@ -24,6 +23,9 @@ public class StockView extends JFrame implements ActionListener {
 
 	JTable tableList;
 	StockTableModel tbModelStock;
+
+	StockAddView stockAdd;
+	StockModifyView stockModify;
 
 	public void addLayout() {
 
@@ -80,30 +82,6 @@ public class StockView extends JFrame implements ActionListener {
 
 	}
 
-	class StockTableModel extends AbstractTableModel {
-
-		ArrayList data = new ArrayList();
-		String[] columnNames = { "재고코드", "자재코드", "자재명", "수량", "입고일", "유통기한" };
-
-		public int getRowCount() {
-			return data.size();
-		}
-
-		public String getColumnName(int col) {
-			return columnNames[col];
-		}
-
-		public int getColumnCount() {
-			return columnNames.length;
-		}
-
-		public Object getValueAt(int row, int col) {
-			ArrayList temp = (ArrayList) data.get(row);
-			return temp.get(col);
-		}
-
-	}
-
 	public StockView() {
 		addLayout();
 		eventProc();
@@ -121,6 +99,16 @@ public class StockView extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ev) {
 		Object evt = ev.getSource();
+		if (evt == insertRoll) {
+			// stockAddView는 처음 호출 시 한 번만 생성
+			if (stockAdd == null) stockAdd = new StockAddView();
+			stockAdd.setVisible(true);
+
+		} else if (evt == updateRoll) {
+			// StockModifyView는 처음 호출 시 한 번만 생성
+			if (stockModify == null) stockModify = new StockModifyView();
+			stockModify.setVisible(true);
+		}
 
 	}
 
