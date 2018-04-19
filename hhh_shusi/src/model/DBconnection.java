@@ -2,6 +2,7 @@ package model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DBconnection {
 	static Connection con;
@@ -16,8 +17,11 @@ public class DBconnection {
 		pass = "inhog";
 		
 		con = DriverManager.getConnection(url,user,pass);
+		
 	}
-	public static Connection getConnectio() throws Exception{
+	
+	/*오타수정 getConnectio -> getConnection*/
+	public static Connection getConnection() throws Exception{
 		if(con == null) new DBconnection();
 		return con;
 	}
