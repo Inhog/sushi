@@ -8,15 +8,12 @@ public class StoreMgtView extends JFrame implements ActionListener{
 
 	
 	JPanel NorthPanel,North_SouthPanel,CenterPanel,SouthPanel,WestPanel,EastPanel,South_NorthPanel;
-	JLabel lblStoreName,lblBrand,lblSpace2;
-	JButton bTable1,bTable2,bTable3,bStock,bExit;
-	JPanel South_SouthPanel;
-	JLabel lblSpace3;
-	JPanel North_NorthPanel;
-	JLabel lblSpace4;
-	JLabel lblSpace1;
+	JLabel lblStoreName,lblBrand,lblSpace1,lblSpace2,lblSpace3,lblSpace4;
+	JButton bTable1,bTable2,bTable3,bStock,bExit,bMenuManagement;
+	JPanel South_SouthPanel,North_NorthPanel,South_CenterPanel,panel_space1,panel_space2,panel_space3;
 	
-
+	JButton bAddMenu,bModifyMenu;
+	JPanel panel_MenuManagement;
 	
 	public StoreMgtView(){
 		// JFrame 레이아웃 추가
@@ -30,6 +27,7 @@ public class StoreMgtView extends JFrame implements ActionListener{
 
 		
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+		
 	}
 	
 
@@ -45,12 +43,20 @@ public class StoreMgtView extends JFrame implements ActionListener{
 		EastPanel = new JPanel();
 		South_SouthPanel = new JPanel();
 		North_NorthPanel = new JPanel();
+		South_CenterPanel = new JPanel();
+		panel_space2 = new JPanel();
+		panel_space1 = new JPanel();
+		panel_space3 = new JPanel();
+		panel_MenuManagement = new JPanel();
 
 		bTable1 = new JButton("테이블1");
 		bTable2 = new JButton("테이블2");
 		bTable3 = new JButton("테이블3");
-		bStock = new JButton("재고");
+		bMenuManagement = new JButton("메뉴관리");
 		bExit = new JButton("종료");
+		bStock = new JButton("재고");
+		bAddMenu = new JButton("메뉴추가");
+		bModifyMenu = new JButton("메뉴 수정 / 삭제");
 		
 		lblStoreName = new JLabel("ㅎㅎㅎSushi 멀티캠퍼스점");
 		lblBrand = new JLabel("=ㅎㅎㅎSushi=");
@@ -77,18 +83,28 @@ public class StoreMgtView extends JFrame implements ActionListener{
 		NorthPanel.add(lblBrand, BorderLayout.EAST);
 		NorthPanel.add(North_NorthPanel, BorderLayout.NORTH);
 		North_SouthPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-		
-		SouthPanel.add(bStock, BorderLayout.WEST);
-		SouthPanel.add(bExit, BorderLayout.EAST);
 		North_SouthPanel.add(lblSpace1);
 		South_NorthPanel.add(lblSpace2);
 		South_SouthPanel.add(lblSpace3);
+		
+		SouthPanel.add(South_CenterPanel, BorderLayout.CENTER);
+		South_CenterPanel.setLayout(new GridLayout(1, 2, 5, 0));
+		South_CenterPanel.add(bStock);
+		South_CenterPanel.add(bMenuManagement);
+		
+		South_CenterPanel.add(panel_space1);
+		South_CenterPanel.add(panel_space2);
+		South_CenterPanel.add(panel_space3);
+		South_CenterPanel.add(bExit);
 		North_NorthPanel.add(lblSpace4);
 
 
 		CenterPanel.add(bTable1);
 		CenterPanel.add(bTable2);
 		CenterPanel.add(bTable3);
+		panel_MenuManagement.setLayout(new FlowLayout());
+		panel_MenuManagement.add(bAddMenu);
+		panel_MenuManagement.add(bModifyMenu);
 	}
 	
 	public void eventProc() {
@@ -97,6 +113,9 @@ public class StoreMgtView extends JFrame implements ActionListener{
 		bTable3.addActionListener(this);
 		bStock.addActionListener(this);
 		bExit.addActionListener(this);
+		bMenuManagement.addActionListener(this);
+		bModifyMenu.addActionListener(this);
+		bAddMenu.addActionListener(this);
 	}
 	
 	public void connectDB(){
@@ -123,6 +142,12 @@ public class StoreMgtView extends JFrame implements ActionListener{
 //			new StockView();
 		}else if(evt == bExit){
 			System.exit(0);
+		}else if(evt == bMenuManagement){
+			JOptionPane.showMessageDialog(null,panel_MenuManagement);
+		}else if(evt == bAddMenu){
+//			AddMenu();
+		}else if(evt == bModifyMenu){
+//			ModifyMenu();
 		}
 	}
 
