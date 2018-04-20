@@ -40,7 +40,7 @@ public class MenuAddView extends JDialog implements ActionListener{
 		addLayout();
 		eventProc();	//이벤트 등록
 		dbConnection();
-		setSize(600, 500);
+		setSize(800, 600);
 		
 		/* 데스트 후 주석필요
 		 * */

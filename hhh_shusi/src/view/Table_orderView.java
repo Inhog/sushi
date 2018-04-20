@@ -9,6 +9,11 @@ import Customer.orderView;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import net.miginfocom.swing.MigLayout;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.RowSpec;
+import javax.swing.GroupLayout.Alignment;
 
 public class Table_orderView  extends JFrame implements ActionListener{
 	
@@ -31,18 +36,20 @@ public class Table_orderView  extends JFrame implements ActionListener{
 //	orderModel	Model;
 	
 //	나중에 String 배열에 있는 내용을 DB에서 가져올 것임.
-	String[] StrSushiName = {"소라 초밥","참치 초밥","소고기 초밥","장어 초밥","계란 초밥","광어 초밥","간장새우 초밥","생새우 초밥","연어 초밥"};
+//	String[] StrSushiName = {"소라 초밥","참치 초밥","소고기 초밥","장어 초밥","계란 초밥","광어 초밥","간장새우 초밥","생새우 초밥","연어 초밥","테스트"};
+	String[] StrSushiName = {"소라 초밥","참치 초밥","소고기 초밥","장어 초밥","계란 초밥"};
 	int[] cntSushi = {0,0,0,0,0,0,0,0,0};
 	//	MenuTableModel에 컬럼이름
 	String [] columnNames = {"번호","주문명","수량"};			
 	String[][] a= {{"0","0","0"}};
+
 	
 	public Table_orderView() {
 		addLayout();
 		eventProc();
 		connectDB();
 		setVisible(true);
-		setSize(500,600);
+		setSize(800,600);
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
 	}
@@ -66,28 +73,40 @@ public class Table_orderView  extends JFrame implements ActionListener{
 		sushiPane = new JPanel();
 		dishPane = new JPanel();
 		drinkPane = new JPanel();
-		sushiPane.setLayout(new GridLayout(3, 3, 0, 0));
-		dishPane.setLayout(new GridLayout(3, 3, 0, 0));
-		drinkPane.setLayout(new GridLayout(3, 3, 0, 0));
-		sushi = new JButton[9];
+		
+		/*menuDB에서 총 보여줄 메뉴들이 몇 개 인지 파악하여 버튼의 갯수 및 레이아웃을 결정*/
+		
+		sushiPane.setPreferredSize(new Dimension(10,10));
+		
+		int sushiCount, dishCount, drinkCount;
+		sushiPane.setLayout(new FlowLayout());
+//		sushiPane.setLayout(new FlowLayout());
+		dishPane.setLayout(new GridLayout(3, 3, 5, 5));
+		drinkPane.setLayout(new GridLayout(3, 3, 5, 5));
+		sushi = new JButton[10];
 		dish = new JButton[9];
 		drink = new JButton[9];
 		
-		for(int i=0;i<9;i++){
+		for(int i=0;i<StrSushiName.length;i++){
 			sushi[i] = new JButton(StrSushiName[i]);
 		}
 		
-		for(int i=0;i<9;i++){
+
+		sushi[0].setPreferredSize(new Dimension(150, 150));
+		
+		for(int i=0;i<StrSushiName.length;i++){
 			sushiPane.add(sushi[i]);
 //			dishPane.add(dish[i]);
 //			drinkPane.add(drink[i]);
 		}
 
 		
-		scrollPane_1 = new JScrollPane(sushiPane);
+		scrollPane_1 = new JScrollPane(sushiPane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane_2 = new JScrollPane(dishPane);
 		scrollPane_3 = new JScrollPane(drinkPane);
 		
+		;
+
 		lblBrandName = new JLabel("ㅎㅎㅎ_Sushi");
 		
 		/*	테이블 번호 보여주기 	*/
@@ -113,6 +132,7 @@ public class Table_orderView  extends JFrame implements ActionListener{
 		MenuTab.addTab("식사류", scrollPane_2);
 		MenuTab.addTab("주류", scrollPane_3);
 		
+		
 		CenterPane.add(Tablepanel);
 		Tablepanel.setLayout(new BorderLayout(0, 0));
 		Tablepanel.add(TablePanel_South, BorderLayout.SOUTH);
@@ -129,15 +149,15 @@ public class Table_orderView  extends JFrame implements ActionListener{
 		Tablepanel.add(TablePanel_Center, BorderLayout.CENTER);
 		TablePanel_Center.setLayout(new BorderLayout(0, 0));
 		TablePanel_Center.add(new JScrollPane(tableMenu),BorderLayout.CENTER);
-				
+		
+
+
+		
+		
 		}
 	
 	public void eventProc(){
-		bDeleteorder.addActionListener(this);
-		bPayment.addActionListener(this);
-		// 메뉴마다 ActionListener 등록.
-		for(int i=0;i<9;i++)
-		sushi[i].addActionListener(this);
+
 	}
 	
 	public void connectDB(){
@@ -150,74 +170,17 @@ public class Table_orderView  extends JFrame implements ActionListener{
 		
 	}
 	public void addMenu(int no){
-		String[] b= {String.valueOf(tableModel.getRowCount()),StrSushiName[no],String.valueOf(cntSushi[no])};
-//		테이블에 값이 있으면
-		if(tableModel.getRowCount() != 0){
-			// 테이블의 길이만큼 탐색하여 같은 메뉴의 이름이 있는지 확인
-			for(int i=0;i<tableModel.getRowCount();i++){
-				if(tableModel.getValueAt(i, 1) == StrSushiName[no]){
-					// 같은 메뉴의 이름이 있다면 메뉴번호 그대로, 수량 +1으로 수정한다.
-					// 수정한 후 반복문을 빠져나온다.
-					tableModel.setValueAt(String.valueOf(++cntSushi[no]), i, 2);
-					tableModel.setValueAt(tableModel.getValueAt(i, 0), i, 0);
-					break;
-				}
-				//끝까지 다 돌았는데 없으면 메뉴번호는 순서대로, 수량은 1으로 추가한다.
-				if(i == tableModel.getRowCount()-1){
-					tableModel.addRow(b);
-				}
-			}
-		}else{
-			// 테이블에 아예 값이 없는 상황이라면
-			// 해당 메뉴를 메뉴번호는 1, 수량도 1로 추가한다.
-			tableModel.addRow(b);
-		}
+	
 	}
 	public void deleteMenu(int row){
-//		model.deleteMenu();
-//		삭제한row에 해당하는 초밥의 개수를 0으로 초기화
-		for(int i=0;i<9;i++){		// 9 는 초밥갯수
-		if(tableModel.getValueAt(row, 1) == StrSushiName[i]){
-			cntSushi[i] =0;
-			}
-		}
-//		tableModel의 해당 row 삭제
-		tableModel.removeRow(row);
-		
-		// 테이블의 값이 삭제된 후 메뉴번호를 삭제된 컬럼부터 1씩 줄여준다.
-		for(int i=row;i<tableModel.getRowCount();i++){
-			tableModel.setValueAt(String.valueOf(i), i, 0);
-		}
+//	
 	}
 	public void payment(){
 //		model.payment();
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Object evt = e.getSource();
-		if(evt == bDeleteorder){
-			deleteMenu(tableMenu.getSelectedRow());
-		}else if(evt == bPayment){
-			payment();
-		}else if(evt == sushi[0]){
-			addMenu(0);
-		}else if(evt == sushi[1]){
-			addMenu(1);
-		}else if(evt == sushi[2]){
-			addMenu(2);
-		}else if(evt == sushi[3]){
-			addMenu(3);
-		}else if(evt == sushi[4]){
-			addMenu(4);
-		}else if(evt == sushi[5]){
-			addMenu(5);
-		}else if(evt == sushi[6]){
-			addMenu(6);
-		}else if(evt == sushi[7]){
-			addMenu(7);
-		}else if(evt == sushi[8]){
-			addMenu(8);
-		}
+	
 	}
 	
 	public static void main(String[] args) {

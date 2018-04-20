@@ -1,4 +1,4 @@
-package sushistore;
+package view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -12,13 +12,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import view.MenuAddView;
-import view.MenuModifyView;
-<<<<<<< HEAD
-=======
-import view.StockView;
->>>>>>> 2ac9d067450a4a91dc7b1bd61bad6c5422e4e733
-
 public class StoreMgtView extends JFrame implements ActionListener{
 
 	
@@ -31,10 +24,7 @@ public class StoreMgtView extends JFrame implements ActionListener{
 	
 	MenuAddView		menuAdd;
 	MenuModifyView	menuModify;
-<<<<<<< HEAD
-=======
 	StockView		stock;
->>>>>>> 2ac9d067450a4a91dc7b1bd61bad6c5422e4e733
 	
 	JDialog	 menuMgt;
 	
@@ -45,7 +35,7 @@ public class StoreMgtView extends JFrame implements ActionListener{
 		eventProc();
 		connectDB();
 		
-		setSize(519,497);
+		setSize(800, 600);
 		setVisible(true);
 
 		
@@ -172,21 +162,12 @@ public class StoreMgtView extends JFrame implements ActionListener{
 		}else if(evt == bExit){
 			System.exit(0);
 		}else if(evt == bMenuManagement){
-<<<<<<< HEAD
-		
-			menuMgt.setVisible(true);
-		}else if(evt == bAddMenu){
-			menuMgt.dispose();
-			if (menuAdd == null ) menuAdd = new MenuAddView();
-			//add버튼을 누르면 기존 MenuManagement창 닫힘
-=======
 			
 			menuMgt.setVisible(true);
 		}else if(evt == bAddMenu){
 			//add버튼을 누르면 기존 MenuManagement창 닫힘
 			menuMgt.dispose();
 			if (menuAdd == null ) menuAdd = new MenuAddView();
->>>>>>> 2ac9d067450a4a91dc7b1bd61bad6c5422e4e733
 			menuAdd.setVisible(true);
 			
 		}else if(evt == bModifyMenu){

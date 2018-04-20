@@ -13,14 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import model.StockModel;
-<<<<<<< HEAD
-/**
-  * Created by clap on 2018. 4. 19. 오후 5:49:31
-  */
-=======
 import vo.StockVO;
 
->>>>>>> 2ac9d067450a4a91dc7b1bd61bad6c5422e4e733
 public class StockModifyView extends JDialog{
 
 	JLabel laMix;

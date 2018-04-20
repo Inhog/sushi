@@ -104,7 +104,7 @@ public class PaymentView extends JFrame implements ActionListener {
 	public PaymentView() {
 		addLayout();
 		eventProc();
-		setSize(580, 450);
+		setSize(800, 600);
 		setResizable(false);
 		setVisible(true);
 		
