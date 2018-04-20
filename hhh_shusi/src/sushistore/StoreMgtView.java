@@ -1,8 +1,19 @@
 package sushistore;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import view.MenuAddView;
+import view.MenuModifyView;
 
 public class StoreMgtView extends JFrame implements ActionListener{
 
@@ -13,7 +24,11 @@ public class StoreMgtView extends JFrame implements ActionListener{
 	JPanel South_SouthPanel,North_NorthPanel,South_CenterPanel,panel_space1,panel_space2,panel_space3;
 	
 	JButton bAddMenu,bModifyMenu;
-	JPanel panel_MenuManagement;
+	
+	MenuAddView		menuAdd;
+	MenuModifyView	menuModify;
+	
+	JDialog	 menuMgt;
 	
 	public StoreMgtView(){
 		// JFrame 레이아웃 추가
@@ -47,7 +62,6 @@ public class StoreMgtView extends JFrame implements ActionListener{
 		panel_space2 = new JPanel();
 		panel_space1 = new JPanel();
 		panel_space3 = new JPanel();
-		panel_MenuManagement = new JPanel();
 
 		bTable1 = new JButton("테이블1");
 		bTable2 = new JButton("테이블2");
@@ -56,7 +70,7 @@ public class StoreMgtView extends JFrame implements ActionListener{
 		bExit = new JButton("종료");
 		bStock = new JButton("재고");
 		bAddMenu = new JButton("메뉴추가");
-		bModifyMenu = new JButton("메뉴 수정 / 삭제");
+		bModifyMenu = new JButton("메뉴 수정/삭제");
 		
 		lblStoreName = new JLabel("ㅎㅎㅎSushi 멀티캠퍼스점");
 		lblBrand = new JLabel("=ㅎㅎㅎSushi=");
@@ -102,9 +116,15 @@ public class StoreMgtView extends JFrame implements ActionListener{
 		CenterPanel.add(bTable1);
 		CenterPanel.add(bTable2);
 		CenterPanel.add(bTable3);
-		panel_MenuManagement.setLayout(new FlowLayout());
-		panel_MenuManagement.add(bAddMenu);
-		panel_MenuManagement.add(bModifyMenu);
+		
+		//메뉴관리 버튼 누르면 나오는 dialog
+		menuMgt = new JDialog();
+		menuMgt.setLayout(new GridLayout(1,2));
+
+		menuMgt.add(bAddMenu);
+		menuMgt.add(bModifyMenu);
+		menuMgt.setSize(300,100);
+		
 	}
 	
 	public void eventProc() {
@@ -143,11 +163,22 @@ public class StoreMgtView extends JFrame implements ActionListener{
 		}else if(evt == bExit){
 			System.exit(0);
 		}else if(evt == bMenuManagement){
-			JOptionPane.showMessageDialog(null,panel_MenuManagement);
+		
+			menuMgt.setVisible(true);
 		}else if(evt == bAddMenu){
-//			AddMenu();
+			menuMgt.dispose();
+			if (menuAdd == null ) menuAdd = new MenuAddView();
+			//add버튼을 누르면 기존 MenuManagement창 닫힘
+			menuAdd.setVisible(true);
+			
 		}else if(evt == bModifyMenu){
-//			ModifyMenu();
+			menuMgt.dispose();
+			if (menuModify == null ) menuModify = new MenuModifyView();
+			
+//		 	DB에 입력된 메뉴를 모두 보여줌
+			menuModify.displayAll();
+			menuModify.setVisible(true);
+			
 		}
 	}
 

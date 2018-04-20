@@ -10,7 +10,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import model.StockModel;
-
+/**
+  * Created by clap on 2018. 4. 19. 오후 5:49:31
+  */
 public class StockModifyView extends JDialog{
 	JTable table;
 
