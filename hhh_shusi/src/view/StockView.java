@@ -4,49 +4,57 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import model.StockModel;
+import model.vo.Stock;
+import vo.StockVO;
+
 public class StockView extends JFrame implements ActionListener {
 
-	JButton insertRoll, updateRoll, searchBtr;
+	JButton insertRoll, searchBtr;
 	JTextField stockCode, matName, matCode;
 	JLabel laStockCode, laMatName, laMatCode;
 	JCheckBox matCheck;
-
-	JTable tableList;
-	StockTableModel tbModelStock;
-
+	
 	StockAddView stockAdd;
 	StockModifyView stockModify;
-
+	
+	JTable tableList;
+	StockTableModel tbModelStock;
+	
+	StockModel model;
+	
 	public void addLayout() {
 
 		stockCode = new JTextField(10);
 		matName = new JTextField(10);
 		matCode = new JTextField(10);
-		insertRoll = new JButton("입고등록");
-		updateRoll = new JButton("재고수정");
-		searchBtr = new JButton("검색");
+		insertRoll = new JButton("  입고등록   ");
+		searchBtr = new JButton("  검     색    ");
 		matCheck = new JCheckBox("자재별 조회");
 
 		tbModelStock = new StockTableModel();
 		tableList = new JTable(tbModelStock);
 
-		JPanel p_north_west = new JPanel(new GridLayout(1, 2)); // 위쪽에 왼쪽
+		JPanel p_north_west = new JPanel(new BorderLayout()); // 위쪽에 왼쪽
 		JPanel p_north_center = new JPanel(new GridLayout(4, 1)); // 위쪽에 가운데
 		JPanel p_north_east = new JPanel(new BorderLayout());
 
 		// 윗쪽의 왼쪽 버튼 영역
 		p_north_west.add(insertRoll);
-		p_north_west.add(updateRoll);
 
 		// 윗쪽의 가운데 텍스트필드와 체크박스 영역
 		JPanel p_north_center1 = new JPanel();
@@ -79,21 +87,52 @@ public class StockView extends JFrame implements ActionListener {
 		getContentPane().add(p_north_center, BorderLayout.CENTER);
 		getContentPane().add(p_north_east, BorderLayout.EAST);
 		getContentPane().add(p_south, BorderLayout.SOUTH);
-
+		
 	}
 
 	public StockView() {
+		ConnectionDB();
 		addLayout();
 		eventProc();
 		setSize(800, 600);
-		setVisible(true);
+		search();
 
 	}
+	
+	
 
 	void eventProc() {
 		insertRoll.addActionListener(this);
-		updateRoll.addActionListener(this);
 		searchBtr.addActionListener(this);
+		
+		tableList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e){
+				int row = tableList.getSelectedRow();
+				int col = 0;
+				String stockNum = (String) tableList.getValueAt(row, col);
+				//System.out.println(stockNum);
+				StockVO stock;
+				try {
+					// 데이타베이스에서 데이타 가져옴
+					stock = model.selectStock(stockNum);
+					
+					StockModifyView stockModify = new StockModifyView();
+					//*
+					stockModify.tfStockCode.setText( stock.getStockNo() );
+					stockModify.eachMenuCombo.setSelectedItem(  stock.getMaterialCode() );
+					stockModify.tfQuantity.setText(    stock.getQuantity() );
+					stockModify.tfAddDate.setText( stock.getAddDate() );
+					stockModify.tfExpiredDate.setText( stock.getExpiredDate() );
+					// 화면 출력
+					stockModify.setVisible(true);
+					
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+				
+			}
+		});
 	}
 
 	@Override
@@ -101,18 +140,38 @@ public class StockView extends JFrame implements ActionListener {
 		Object evt = ev.getSource();
 		if (evt == insertRoll) {
 			// stockAddView는 처음 호출 시 한 번만 생성
-			if (stockAdd == null) stockAdd = new StockAddView();
-			stockAdd.setVisible(true);
-
-		} else if (evt == updateRoll) {
-			// StockModifyView는 처음 호출 시 한 번만 생성
-			if (stockModify == null) stockModify = new StockModifyView();
-			stockModify.setVisible(true);
+			if (stockAdd == null)
+				stockAdd = new StockAddView(this);	
+				stockAdd.setVisible(true);
+			}else if ( evt == searchBtr){
+				search();
+			}
+		// else if (evt == updateRoll) {
+		// // StockModifyView는 처음 호출 시 한 번만 생성
+		// if (stockModify == null) stockModify = new StockModifyView();
+		// stockModify.setVisible(true);
+	}
+	
+	void delete(){
+		
+	}
+	void search(){
+		
+		ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
+		try{
+			data = model.search();
+			tbModelStock.data = data;
+			tbModelStock.fireTableDataChanged();
+		}catch(Exception e){
+			System.out.println("재고list출력 실패 :" + e.getMessage());
 		}
-
+		
 	}
-
-	public static void main(String[] args) {
-		new StockView();
+	
+	void ConnectionDB(){
+		model = new StockModel();
 	}
+//	public static void main(String[] args) {
+//		new StockView();
+//	}
 }

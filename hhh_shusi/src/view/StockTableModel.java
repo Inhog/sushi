@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-class StockTableModel extends AbstractTableModel {
+public class StockTableModel extends AbstractTableModel {
 
 	ArrayList data = new ArrayList();
 	String[] columnNames = { "재고코드", "자재코드", "자재명", "수량", "입고일", "유통기한" };

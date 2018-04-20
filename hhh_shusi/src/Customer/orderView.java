@@ -8,6 +8,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+// Create by Inho 2018. 4. 19. 오후 5:53:13
+
 public class orderView extends JFrame implements ActionListener{
 	
 	JPanel NorthPane,CenterPane,Tablepanel,TablePanel_South,sendPanel,TablePanel_Center,TablePanel_North,deletePanel;
@@ -24,31 +26,30 @@ public class orderView extends JFrame implements ActionListener{
 	DefaultTableModel tableModel;
 	JTable		tableMenu;			
 	
-	int orderCount=1;
 //	orderModel 만들면 그때 생성함.
-//	orderModel	Model;
+	orderModel	Model;
 	
 //	나중에 String 배열에 있는 내용을 DB에서 가져올 것임.
-	String[] StrSushiName = {"소라 초밥","참치 초밥","소고기 초밥","장어 초밥","계란 초밥","광어 초밥","간장새우 초밥","생새우 초밥","연어 초밥"};
-	int[] cntSushi = {0,0,0,0,0,0,0,0,0};
+//	String[] StrSushiName = {"소라 초밥","참치 초밥","소고기 초밥","장어 초밥","계란 초밥","광어 초밥","간장새우 초밥","생새우 초밥","연어 초밥"};
+	int[] cntSushi;
 	//	MenuTableModel에 컬럼이름
-	String [] columnNames = {"번호","주문명","수량"};			
-	String[][] a= {{"0","0","0"}};
+	String [] columnNames = {"번호","주문명","수량"};
+	
+	MenuVO[] MenuInfo;
 	public orderView() {
+		connectDB();
+		getMenuInfo();
 		addLayout();
 		eventProc();
-		connectDB();
 		setVisible(true);
 		setSize(500,600);
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-
 	}
 	// 우선 프레임 구성만 한 상태 - 18.04.18 
 	// 내부 메서드와 Model 클래스를 만들어서 객체 생성해야함.
 	public void addLayout(){
-		tableModel = new DefaultTableModel(a,columnNames);
+		tableModel = new DefaultTableModel(null,columnNames);
 		tableMenu = new JTable(tableModel);
-//		tableMenu = new JTable(a,columnNames);
 		NorthPane = new JPanel();
 		CenterPane = new JPanel();
 		Tablepanel = new JPanel();
@@ -64,22 +65,24 @@ public class orderView extends JFrame implements ActionListener{
 		sushiPane.setLayout(new GridLayout(3, 3, 0, 0));
 		dishPane.setLayout(new GridLayout(3, 3, 0, 0));
 		drinkPane.setLayout(new GridLayout(3, 3, 0, 0));
-		sushi = new JButton[9];
+		
+		
+		// 화면을 구성할 때 DB에서 메뉴테이블의 갯수를 받아와서 화면구성을 해야함.
+		
+		// DB에서 메뉴테이블의 갯수를 가져오는 메서드
+		
+		sushi = new JButton[MenuInfo.length];
 		dish = new JButton[9];
 		drink = new JButton[9];
+		cntSushi = new int[MenuInfo.length];
+//		for(int i=0;i<9;i++){
+//			sushi[i] = new JButton(StrSushiName[i]);
+//		}
+		// 여까지 했는데 생객해보니 갯수만가져올게 아니라 메뉴 객체로 메뉴코드 등 모든컬럼에 대한 내용을 받아와야 함.
 		
-//		sushiPane.add(new JButton("연어 초밥"));
-//		sushiPane.add(new JButton("생새우 초밥"));
-//		sushiPane.add(new JButton("간장새우 초밥"));
-//		sushiPane.add(new JButton("광어 초밥"));
-//		sushiPane.add(new JButton("계란 초밥"));
-//		sushiPane.add(new JButton("장어 초밥"));
-//		sushiPane.add(new JButton("소고기 초밥"));
-//		sushiPane.add(new JButton("참치 초밥"));
-//		sushiPane.add(new JButton("소라 초밥"));
-		
-		for(int i=0;i<9;i++){
-			sushi[i] = new JButton(StrSushiName[i]);
+		for(int i = 0; i<MenuInfo.length;i++){
+			sushi[i] = new JButton(MenuInfo[i].getName());
+			cntSushi[i] = 1;
 		}
 		
 		for(int i=0;i<9;i++){
@@ -135,35 +138,25 @@ public class orderView extends JFrame implements ActionListener{
 				
 		}
 	
-//		//화면에 테이블 붙이는 메소드 
-//		class MenuTableModel extends AbstractTableModel { 
-//			  
-//			ArrayList data = new ArrayList();
-//			String [] columnNames = {"번호","주문명","수량"};
-//	
-//			//=============================================================
-//			// 1. 기본적인 TabelModel  만들기
-//			// 아래 세 함수는 TabelModel 인터페이스의 추상함수인데
-//			// AbstractTabelModel에서 구현되지 않았기에...
-//			// 반드시 사용자 구현 필수!!!!
-//	
-//		    public int getColumnCount() { 
-//		        return columnNames.length; 
-//		    } 
-//		     
-//		    public int getRowCount() { 
-//		        return data.size(); 
-//		    } 
-//
-//		    public Object getValueAt(int row, int col) { 
-//				ArrayList temp = (ArrayList)data.get( row );
-//		        return temp.get( col ); 
-//		    }
-//		    
-//		    public String getColumnName(int col){
-//		    	return columnNames[col];
-//		    }
-//		}
+	// DB에서 메뉴테이블의 갯수를 가져오는 메서드
+	public void getMenuInfo(){
+		
+		try {
+			ArrayList<ArrayList<String>> mvo =Model.getMenucount();
+			MenuInfo = new MenuVO[mvo.size()];
+			for(int i=0;i<mvo.size();i++){
+				// 왜 nullPointerException이 발생할까나나나나나나나
+				MenuInfo[i] = new MenuVO();
+				MenuInfo[i].setMenuCode(mvo.get(i).get(0));
+				MenuInfo[i].setName(mvo.get(i).get(1));
+				MenuInfo[i].setPrice(mvo.get(i).get(2));
+				MenuInfo[i].setCategory(mvo.get(i).get(3));
+				MenuInfo[i].setImageloc(mvo.get(i).get(4));
+			}
+		} catch (Exception e) {
+			System.out.println("메뉴 데이터 가져오기 실패 :" + e.getMessage());
+		}
+	}
 	public void eventProc(){
 		bDeleteorder.addActionListener(this);
 		bSendorder.addActionListener(this);
@@ -174,7 +167,7 @@ public class orderView extends JFrame implements ActionListener{
 	
 	public void connectDB(){
 		try{
-//			Model = new orderModel();
+			Model = new orderModel();
 			System.out.println("고객주문화면 디비연결 성공");
 		}catch(Exception ex){
 			System.out.println("고객주문화면 연결실패 :" +ex.getMessage());
@@ -182,15 +175,15 @@ public class orderView extends JFrame implements ActionListener{
 		
 	}
 	public void addMenu(int no){
-		String[] b= {String.valueOf(tableModel.getRowCount()),StrSushiName[no],String.valueOf(cntSushi[no])};
+		String[] b= {String.valueOf(tableModel.getRowCount()+1),MenuInfo[no].getName(),String.valueOf(cntSushi[no])};
 //		테이블에 값이 있으면
 		if(tableModel.getRowCount() != 0){
 			// 테이블의 길이만큼 탐색하여 같은 메뉴의 이름이 있는지 확인
 			for(int i=0;i<tableModel.getRowCount();i++){
-				if(tableModel.getValueAt(i, 1) == StrSushiName[no]){
+				if(tableModel.getValueAt(i, 1) == MenuInfo[no].getName()){
 					// 같은 메뉴의 이름이 있다면 메뉴번호 그대로, 수량 +1으로 수정한다.
 					// 수정한 후 반복문을 빠져나온다.
-					tableModel.setValueAt(String.valueOf(++cntSushi[no]), i, 2);
+					tableModel.setValueAt(String.valueOf(cntSushi[no]++), i, 2);
 					tableModel.setValueAt(tableModel.getValueAt(i, 0), i, 0);
 					break;
 				}
@@ -209,8 +202,8 @@ public class orderView extends JFrame implements ActionListener{
 //		model.deleteMenu();
 //		삭제한row에 해당하는 초밥의 개수를 0으로 초기화
 		for(int i=0;i<9;i++){		// 9 는 초밥갯수
-		if(tableModel.getValueAt(row, 1) == StrSushiName[i]){
-			cntSushi[i] =0;
+		if(tableModel.getValueAt(row, 1) == MenuInfo[i].getName()){
+			cntSushi[i] =1;
 			}
 		}
 //		tableModel의 해당 row 삭제
@@ -218,11 +211,26 @@ public class orderView extends JFrame implements ActionListener{
 		
 		// 테이블의 값이 삭제된 후 메뉴번호를 삭제된 컬럼부터 1씩 줄여준다.
 		for(int i=row;i<tableModel.getRowCount();i++){
-			tableModel.setValueAt(String.valueOf(i), i, 0);
+			tableModel.setValueAt(String.valueOf(i+1), i, 0);
 		}
 	}
-	public void sendOrder(){
-//		model.sendOrder();
+	public void sendOrder(DefaultTableModel tableModel){
+		// 버튼을 누르면 String[]으로  값을 하나 하나 받아서 model.sendOrder()로 보내준다.
+		// 우선 테이블안에 값을 받을 객체 선언.
+		
+		// 테이블의 데이터 수 만큼 반복
+		for(int i=0;i<tableModel.getRowCount();i++){
+			String[] a = {(String) tableModel.getValueAt(i, 0),(String) tableModel.getValueAt(i, 1),(String) tableModel.getValueAt(i, 2)};
+			try {
+				Model.sendOrder(a);
+			} catch (Exception e) {
+				System.out.println("주문 전솔실패 : " + e.getMessage());
+			}
+		}
+		for(int i=0;i<tableModel.getRowCount();){
+			tableModel.removeRow(i);
+		}
+	//		model.sendOrder();
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -230,7 +238,7 @@ public class orderView extends JFrame implements ActionListener{
 		if(evt == bDeleteorder){
 			deleteMenu(tableMenu.getSelectedRow());
 		}else if(evt == bSendorder){
-			sendOrder();
+			sendOrder(tableModel);
 		}else if(evt == sushi[0]){
 			addMenu(0);
 		}else if(evt == sushi[1]){
