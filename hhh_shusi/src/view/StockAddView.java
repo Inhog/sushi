@@ -1,22 +1,19 @@
 package view;
 
-import javax.swing.JDialog;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import model.StockModel;
-import model.vo.Stock;
-
-import javax.swing.JSplitPane;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JMenuItem;
+import vo.StockVO;
 
 public class StockAddView extends JDialog {
 	private JLabel laMix;
@@ -99,7 +96,7 @@ public class StockAddView extends JDialog {
 		btnStockAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				model.insert(new Stock(String.valueOf(eachMenuCombo.getSelectedItem()),
+				model.insert(new StockVO(String.valueOf(eachMenuCombo.getSelectedItem()),
 						          tfQuantity.getText(),tfExpiredDate.getText()));
 				// 재고화면의 전체목록 보기
 				parent.search();

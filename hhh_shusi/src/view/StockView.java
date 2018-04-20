@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 
 import model.StockModel;
 import model.vo.Stock;
+import vo.StockVO;
 
 public class StockView extends JFrame implements ActionListener {
 
@@ -94,7 +95,6 @@ public class StockView extends JFrame implements ActionListener {
 		addLayout();
 		eventProc();
 		setSize(800, 600);
-		setVisible(true);
 		search();
 
 	}
@@ -112,18 +112,18 @@ public class StockView extends JFrame implements ActionListener {
 				int col = 0;
 				String stockNum = (String) tableList.getValueAt(row, col);
 				//System.out.println(stockNum);
-				Stock st;
+				StockVO stock;
 				try {
 					// 데이타베이스에서 데이타 가져옴
-					st = model.selectStock(stockNum);
+					stock = model.selectStock(stockNum);
 					
 					StockModifyView stockModify = new StockModifyView();
 					//*
-					stockModify.tfStockCode.setText( st.getStock_no());
-					stockModify.eachMenuCombo.setSelectedItem(  st.getMaterial_Code());
-					stockModify.tfQuantity.setText(    st.getQuantity() );
-					stockModify.tfAddDate.setText( st.getAdd_date());
-					stockModify.tfExpiredDate.setText( st.getExpiredDate());
+					stockModify.tfStockCode.setText( stock.getStockNo() );
+					stockModify.eachMenuCombo.setSelectedItem(  stock.getMaterialCode() );
+					stockModify.tfQuantity.setText(    stock.getQuantity() );
+					stockModify.tfAddDate.setText( stock.getAddDate() );
+					stockModify.tfExpiredDate.setText( stock.getExpiredDate() );
 					// 화면 출력
 					stockModify.setVisible(true);
 					
@@ -142,7 +142,9 @@ public class StockView extends JFrame implements ActionListener {
 			// stockAddView는 처음 호출 시 한 번만 생성
 			if (stockAdd == null)
 				stockAdd = new StockAddView(this);	
-			stockAdd.setVisible(true);
+				stockAdd.setVisible(true);
+			}else if ( evt == searchBtr){
+				search();
 			}
 		// else if (evt == updateRoll) {
 		// // StockModifyView는 처음 호출 시 한 번만 생성
@@ -155,22 +157,21 @@ public class StockView extends JFrame implements ActionListener {
 	}
 	void search(){
 		
-		ArrayList data = new ArrayList();
+		ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
 		try{
-		data = model.search();
+			data = model.search();
+			tbModelStock.data = data;
+			tbModelStock.fireTableDataChanged();
 		}catch(Exception e){
+			System.out.println("재고list출력 실패 :" + e.getMessage());
 		}
-		tbModelStock.data = data;
-		tableList.setModel(tbModelStock);
-		tbModelStock.fireTableDataChanged();
+		
 	}
 	
 	void ConnectionDB(){
 		model = new StockModel();
 	}
-	public static void main(String[] args) {
-		new StockView();
-	}
+//	public static void main(String[] args) {
+//		new StockView();
+//	}
 }
-
-	

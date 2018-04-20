@@ -3,10 +3,11 @@ package sushistore;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import view.*;
 
 public class Sushi_Store{
 	StoreMgtView	storeMgt;
-//	StockView		stock;
+	StockView		stock;
 //	Table_orderView	table_order;
 //	PaymentView		payment;
 	
@@ -18,9 +19,9 @@ public class Sushi_Store{
 
 		// 각각의 화면을 구성하는 클래스 객체 생성
 		storeMgt = new StoreMgtView();
-//		stock	 = new StockView();
-//		table_order = new Table_orderView();
-//		payment = new PaymentView();
+		stock	 = new StockView();			//준홍이 작업
+//		table_order = new Table_orderView();	//수형 작업
+//		payment = new PaymentView();		//준홍 작업
 		
 //		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 	}

@@ -1,45 +1,53 @@
 package view;
 
-import javax.swing.JDialog;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import model.StockModel;
-
-import javax.swing.JSplitPane;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JMenuItem;
+import model.MenuModel;
+import vo.MenuVO;
 
 /*
  * 2018.4.19 written by clap
  * */
 
-public class MenuAddView extends JDialog{
-	private JTextField tfMenuCode;
-	private JTextField tfMenuName;
-	private JTextField tfPrice;
-	private JTextField tfImage;
+public class MenuAddView extends JDialog implements ActionListener{
+	JTextField tfMenuCode;
+	JTextField tfMenuName;
+	JTextField tfPrice;
+	JTextField tfImage;
 	
-	private JMenuItem mnbtnCategory;
+	JComboBox<String> category;
 	
 	JButton btnStockAdd;
 	
-	StockModel model;
+	MenuModel model;
 	
 	// 구성 요소 선언
 	
-	MenuAddView(){
+	public MenuAddView(){
 		addLayout();
 		eventProc();	//이벤트 등록
+		dbConnection();
 		setSize(600, 500);
 		
 		/* 데스트 후 주석필요
 		 * */
-		setVisible(true);
+//		setVisible(true);
+	}
+	void dbConnection(){
+		model = new MenuModel();
 	}
 	
 	void addLayout(){
@@ -73,14 +81,16 @@ public class MenuAddView extends JDialog{
 		tfPrice.setColumns(10);
 		panel_1.add(tfPrice);
 		
-		/*메뉴버튼에 카테고리코드 입력 필요 함 - 수형*/
-		mnbtnCategory = new JMenuItem("카테고리선택");
-		panel_1.add(mnbtnCategory);
+		/*메뉴버튼에 카테고리코드 입력 필요 함 - 수형 */
+		String[] categories = {"초밥류", "식사류", "주류", "비품"};
+		category = new JComboBox<String>(categories);
+		panel_1.add(category);
 		
 		
 		/*파일탐색기 추가 필요*/
 		tfImage = new JTextField();
 		tfImage.setColumns(10);
+		tfImage.setEditable(false);
 		panel_1.add(tfImage);
 		
 		btnStockAdd = new JButton("메뉴등록");
@@ -90,20 +100,82 @@ public class MenuAddView extends JDialog{
 	}
 	
 	void eventProc(){
-		btnStockAdd.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				insert();
+		btnStockAdd.addActionListener( this );
+		tfImage.addMouseListener( new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				tfImage.setText( getFileLocation() );
 			}
 		});
+		
+
+		
 	}
 	
-	void insert(){
-		model.insert(null);
+	public void actionPerformed(ActionEvent e) {
+			Object evt = e.getSource();
+			if ( evt == btnStockAdd ){
+				MenuVO menu = new MenuVO();
+				
+				menu.setMenuCode(tfMenuCode.getText());
+				menu.setName(tfMenuName.getText());
+				menu.setPrice(tfPrice.getText());
+				menu.setCategory((String)category.getSelectedItem());
+				menu.setImage(tfImage.getText());
+				
+				addMenu(menu);
+			}
+	} 
+	
+	/*
+	 * tf에 입력받은 값을 addMenu에 넘겨주기
+	 * */
+	/**
+	  * Created by clap on 2018. 4. 20. 오전 10:31:50
+	  * addMenu기능 추가
+	  */
+	void addMenu(MenuVO menu){
+		
+		try {
+			model.addMenu(menu);
+			dispose();
+		} catch (Exception e) {
+			System.out.println("메뉴추가 실패 : " + e.getMessage());// TODO Auto-generated catch block
+//			e.printStackTrace();
+		}
 	}
+	
+	
+
+	
+	/* 
+	 * 2018.4.19 파일추져 추가 - CLAP
+	 * 
+	 * */
+	public String getFileLocation(){
+		String filePath;
+		
+		JFileChooser fileChooser = new JFileChooser();
+
+		// filechooser 초기 위치를 현재 위치로 변경
+		fileChooser.setCurrentDirectory(new File(".\\img"));
+		
+		int result = fileChooser.showOpenDialog( this );
+
+		//미입력 및 오류 시 filePath에 null값 넣기
+		if ( result != JFileChooser.APPROVE_OPTION ) filePath = null;
+		filePath = fileChooser.getSelectedFile().getPath();
+		
+		//상대경로로 변환 받아낸 전체 path의 앞부분(project폴더까지의 경로)를 지워줌
+		//[filePath =  .\이미지경로
+		filePath = "." + filePath.replace(System.getProperty("user.dir"), "");
+
+		return filePath; 
+	}
+	
 	
 	/* 데스트 후 주석필요
 	 * */
 	public static void main(String args[]){
-		new MenuAddView();
 	}
 }

@@ -1,6 +1,5 @@
 package view;
 
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,12 +10,10 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import model.StockModel;
-import model.vo.Stock;
+import vo.StockVO;
 
 public class StockModifyView extends JDialog{
 
@@ -106,12 +103,12 @@ public class StockModifyView extends JDialog{
 	void eventProc(){
 		btnModifyUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Stock s = new Stock();
-				s.setStock_no(tfStockCode.getText());
-				s.setQuantity(tfQuantity.getText());
-				s.setAdd_date(tfAddDate.getText());
-				s.setExpiredDate(tfExpiredDate.getText());
-				model.modify(s);
+				StockVO stock = new StockVO();
+				stock.setStockNo(tfStockCode.getText());
+				stock.setQuantity(tfQuantity.getText());
+				stock.setAddDate(tfAddDate.getText());
+				stock.setExpiredDate(tfExpiredDate.getText());
+				model.modify(stock);
 			}
 		});
 	}
