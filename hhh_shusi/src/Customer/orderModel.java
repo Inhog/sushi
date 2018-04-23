@@ -7,7 +7,8 @@ import java.util.ArrayList;
 
 import model.DBconnection;
 
-// Create by Inho 2018. 4. 19. 오후 5:53:29
+// Create by Inho 2018. 4. 21. 오후 5:00:05
+
 
 public class orderModel {
 	static Connection con;
@@ -15,6 +16,7 @@ public class orderModel {
 	String user;
 	String pass;
 	PreparedStatement ps;
+	
 	public orderModel(){
 		dbConnection();
 	}
