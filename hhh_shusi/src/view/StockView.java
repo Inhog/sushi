@@ -28,20 +28,23 @@ public class StockView extends JFrame implements ActionListener {
 	JTextField stockCode, matName, matCode;
 	JLabel laStockCode, laMatName, laMatCode;
 	JCheckBox matCheck;
-	
+
 	StockAddView stockAdd;
 	StockModifyView stockModify;
-	
+
 	JTable tableList;
 	StockTableModel tbModelStock;
-	
+
 	StockModel model;
-	
+
 	public void addLayout() {
 
 		stockCode = new JTextField(10);
+		stockCode.setEditable(false); // setEditable은 편집불가(값은 나옴)/setEnable은 아예
+										// 못쓰는거
 		matName = new JTextField(10);
 		matCode = new JTextField(10);
+		matCode.setEditable(false);
 		insertRoll = new JButton("  입고등록   ");
 		searchBtr = new JButton("  검     색    ");
 		matCheck = new JCheckBox("자재별 조회");
@@ -58,14 +61,17 @@ public class StockView extends JFrame implements ActionListener {
 
 		// 윗쪽의 가운데 텍스트필드와 체크박스 영역
 		JPanel p_north_center1 = new JPanel();
-		p_north_center1.add(new JLabel("재고코드"));
+		p_north_center1.add(new JLabel("재고번호"));
 		p_north_center1.add(stockCode);
+
 		JPanel p_north_center2 = new JPanel();
 		p_north_center2.add(new JLabel("자 재 명"));
 		p_north_center2.add(matName);
+
 		JPanel p_north_center3 = new JPanel();
 		p_north_center3.add(new JLabel("자재코드"));
 		p_north_center3.add(matCode);
+
 		JPanel p_north_center4 = new JPanel();
 		p_north_center4.add(matCheck);
 
@@ -87,10 +93,11 @@ public class StockView extends JFrame implements ActionListener {
 		getContentPane().add(p_north_center, BorderLayout.CENTER);
 		getContentPane().add(p_north_east, BorderLayout.EAST);
 		getContentPane().add(p_south, BorderLayout.SOUTH);
-		
+
 	}
 
 	public StockView() {
+		// DB연결
 		ConnectionDB();
 		addLayout();
 		eventProc();
@@ -98,80 +105,74 @@ public class StockView extends JFrame implements ActionListener {
 		search();
 
 	}
-	
-	
 
 	void eventProc() {
 		insertRoll.addActionListener(this);
 		searchBtr.addActionListener(this);
-		
+
 		tableList.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e){
+			public void mouseClicked(MouseEvent e) {
 				int row = tableList.getSelectedRow();
 				int col = 0;
 				String stockNum = (String) tableList.getValueAt(row, col);
-				//System.out.println(stockNum);
+				// System.out.println(stockNum);
 				StockVO stock;
 				try {
 					// 데이타베이스에서 데이타 가져옴
 					stock = model.selectStock(stockNum);
-					
+
 					StockModifyView stockModify = new StockModifyView();
-					//*
-					stockModify.tfStockCode.setText( stock.getStockNo() );
-					stockModify.eachMenuCombo.setSelectedItem(  stock.getMaterialCode() );
-					stockModify.tfQuantity.setText(    stock.getQuantity() );
-					stockModify.tfAddDate.setText( stock.getAddDate() );
-					stockModify.tfExpiredDate.setText( stock.getExpiredDate() );
+					// *
+					stockModify.tfStockCode.setText(stock.getStockNo());
+					stockModify.eachMenuCombo.setSelectedItem(stock.getMaterialCode());
+					stockModify.tfQuantity.setText(stock.getQuantity());
+					stockModify.tfAddDate.setText(stock.getAddDate());
+					stockModify.tfExpiredDate.setText(stock.getExpiredDate());
 					// 화면 출력
 					stockModify.setVisible(true);
-					
+
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
-				
+
 			}
 		});
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
+		// 화면에서 입고등록 버튼을 누르는 이벤트
 		Object evt = ev.getSource();
 		if (evt == insertRoll) {
 			// stockAddView는 처음 호출 시 한 번만 생성
+			// stockAddView 창을 불러옴
 			if (stockAdd == null)
-				stockAdd = new StockAddView(this);	
-				stockAdd.setVisible(true);
-			}else if ( evt == searchBtr){
-				search();
-			}
-		// else if (evt == updateRoll) {
-		// // StockModifyView는 처음 호출 시 한 번만 생성
-		// if (stockModify == null) stockModify = new StockModifyView();
-		// stockModify.setVisible(true);
+				stockAdd = new StockAddView(this);
+			stockAdd.setVisible(true);
+
+			// 검색 버튼을 누름
+		} else if (evt == searchBtr) {
+			// 입력받은 자재명을 얻어옴
+			ArrayList data = model.searchData(matName.getText());
+			// 자재명을 데이터 베이스에서 받아와서 찾은 데이터를 JTable에 출력
+			tbModelStock.data = data;
+			tbModelStock.fireTableDataChanged();
+		}
 	}
-	
-	void delete(){
-		
-	}
-	void search(){
-		
+
+	void search() {
 		ArrayList<ArrayList<String>> data = new ArrayList<ArrayList<String>>();
-		try{
+		try {
 			data = model.search();
 			tbModelStock.data = data;
 			tbModelStock.fireTableDataChanged();
-		}catch(Exception e){
+		} catch (Exception e) {
 			System.out.println("재고list출력 실패 :" + e.getMessage());
 		}
-		
 	}
-	
-	void ConnectionDB(){
+
+	void ConnectionDB() {
 		model = new StockModel();
 	}
-//	public static void main(String[] args) {
-//		new StockView();
-//	}
 }

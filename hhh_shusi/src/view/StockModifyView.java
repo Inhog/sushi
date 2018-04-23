@@ -3,6 +3,8 @@ package view;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -15,7 +17,7 @@ import javax.swing.JTextField;
 import model.StockModel;
 import vo.StockVO;
 
-public class StockModifyView extends JDialog{
+public class StockModifyView extends JDialog {
 
 	JLabel laMix;
 	JComboBox titleCombo, eachMenuCombo;
@@ -27,35 +29,26 @@ public class StockModifyView extends JDialog{
 	JMenuItem mnbtnMaterialCode;
 
 	String[] title = { "초밥류", "식사류", "주류", "비품" };
-	String[] eachMenu = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l" };
+	//
 
 	JButton btnModifyUpdate;
 
 	StockModel model;
 	StockView parent;
-	
-//	JTable table;
-//
-//	StockTableModel tbModelStock;
-//	JButton btnModifyStock; 
-//	
-//	
-//	StockModel model;
-	
-	StockModifyView(){
+
+	StockModifyView() {
 		addLayout();
-		eventProc();	//이벤트 등록
+		eventProc(); // 이벤트 등록
 		dbConnection();
 		setSize(800, 200);
 
 	}
-	
-	
-	void dbConnection(){
+
+	void dbConnection() {
 		model = new StockModel();
 	}
-	
-	void addLayout(){
+
+	void addLayout() {
 		setAlwaysOnTop(true);
 		getContentPane().setLayout(new GridLayout(0, 2, 0, 0));
 
@@ -73,10 +66,10 @@ public class StockModifyView extends JDialog{
 		panel_1.setLayout(new GridLayout(5, 1, 0, 0));
 
 		/* 메뉴버튼에 자재코트 입력 필요 함 - 수형 */
-		
+
 		titleCombo = new JComboBox(title);
 		this.add(titleCombo);
-		eachMenuCombo = new JComboBox(eachMenu);
+		eachMenuCombo = new JComboBox();
 		this.add(eachMenuCombo);
 		// jcMaterialName.setColumns(10);
 
@@ -87,20 +80,20 @@ public class StockModifyView extends JDialog{
 		tfQuantity = new JTextField();
 		tfQuantity.setColumns(10);
 		panel_1.add(tfQuantity);
-		
+
 		tfAddDate = new JTextField();
 		tfAddDate.setColumns(10);
 		panel_1.add(tfAddDate);
-		
+
 		tfExpiredDate = new JTextField();
 		tfExpiredDate.setColumns(10);
 		panel_1.add(tfExpiredDate);
-		
+
 		btnModifyUpdate = new JButton("수  정");
 		panel_1.add(btnModifyUpdate);
 	}
-		
-	void eventProc(){
+	//JTable에 있는 리스트가 수정창에 그대로 들어가는 코드
+	void eventProc() {
 		btnModifyUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				StockVO stock = new StockVO();
@@ -111,9 +104,29 @@ public class StockModifyView extends JDialog{
 				model.modify(stock);
 			}
 		});
+		
+		titleCombo.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String cate = (String) titleCombo.getSelectedItem();
+				try {
+					modifyCate(cate);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+		});				
 	}
-	
-//	public static void main(String agrs[]){
-//		new StockModifyView();
-//	}
+
+	void modifyCate(String cate) {
+		try {
+			ArrayList<String> ma = model.menuCode(cate);
+			eachMenuCombo.removeAllItems();
+			for (int i = 0; i < ma.size(); i++) {
+				eachMenuCombo.addItem(ma.get(i));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

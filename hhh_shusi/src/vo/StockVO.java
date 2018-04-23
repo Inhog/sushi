@@ -22,6 +22,16 @@ public class StockVO {
 		this.expiredDate =expiredDate;
 	}
 	
+	
+	
+	public StockVO(String stockNo, String materialCode, String quantity, String AddDate) {
+		super();
+		this.stockNo = stockNo;
+		this.materialCode = materialCode;
+		this.quantity = quantity;
+		this.AddDate = AddDate;
+	}
+
 	public StockVO(String stockCode, String materialCode, String quantity, String expiredDate, String addDate) {
 		super();
 		this.stockNo = stockCode;
