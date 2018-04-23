@@ -5,11 +5,15 @@ import java.sql.Date;
   * Created by clap on 2018. 4. 19. 오후 5:49:19
   */
 public class OrderVO {
-	String 	orderNo, customerNo, menuCode, paymentNo;
-	Date 	ordertime;
+	String 	orderNo, customerNo, menuCode, paymentNo, ordertime;
 	
 	public OrderVO(){}
-	public OrderVO(String orderNo, String customerNo, String menuCode, String paymentNo, Date ordertime) {
+	public OrderVO(String customerNo, String menuCode){
+		super();
+		this.customerNo = customerNo;
+		this.menuCode = menuCode;
+	}
+	public OrderVO(String orderNo, String customerNo, String menuCode, String paymentNo, String ordertime) {
 		super();
 		this.orderNo = orderNo;
 		this.customerNo = customerNo;
@@ -41,10 +45,10 @@ public class OrderVO {
 	public void setPaymentNo(String paymentNo) {
 		this.paymentNo = paymentNo;
 	}
-	public Date getOrdertime() {
+	public String getOrdertime() {
 		return ordertime;
 	}
-	public void setOrdertime(Date ordertime) {
+	public void setOrdertime(String ordertime) {
 		this.ordertime = ordertime;
 	}
 	

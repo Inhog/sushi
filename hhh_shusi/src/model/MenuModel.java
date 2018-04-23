@@ -109,8 +109,36 @@ public class MenuModel {
 		
 		ps.close();
 	}
-	
 
+	//카테고리 명을 입력받아 db에서 검색 후 arraylist형태로 리턴
+	//String category = {"스시류", "식사류", "주류"};
+	public ArrayList<MenuVO> searchByCategory( String category ) throws Exception{	
+		ArrayList<MenuVO> menuList = new ArrayList<MenuVO>();
+		
+		String sql = "SELECT 	menu_code, name, price, category, image "
+				+ "	  FROM 	 	menu "
+				+ "	  WHERE		category = ? ";
+		
+		ps =  con.prepareStatement(sql);
+		ps.setString(1,  category);
+		
+		rs =  ps.executeQuery();
+		
+		//menuList에 각 메뉴의 정보를 담아냄
+		while(rs.next()){
+		
+			
+//			[MENU_CODE, NAME, PRICE, CATEGORY, IMAGE]
+			MenuVO menu = new MenuVO(rs.getString("MENU_CODE"), rs.getString("NAME"),
+									 rs.getString("PRICE"), rs.getString("CATEGORY"), 
+									 rs.getString("IMAGE"));
+			
+			menuList.add(menu);
+		}
+		ps.close();
+		
+		return menuList;
+	}
 
 	
 /* 동작 체크를 위함 */	
