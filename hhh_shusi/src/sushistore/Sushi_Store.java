@@ -3,17 +3,17 @@ package sushistore;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.*;
+import java.sql.*;
+import java.util.*;
 import view.*;
 
 public class Sushi_Store{
+	Connection con;
 	StoreMgtView	storeMgt;
 	StockView		stock;
 //	Table_orderView	table_order;
 //	PaymentView		payment;
-	
-//	Sushi_StoreModel클래스 만들면 생성해서 DB와 연결하는 객체
-//	Sushi_StoreModel model;
-//	여기에 만드는거 아닌거 같음.
 	
 	public Sushi_Store(){
 
@@ -26,8 +26,24 @@ public class Sushi_Store{
 //		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 	}
 	
+	void initNet() throws Exception {
+		Class.forName("oracle.jdbc.driver.OracleDriver");
+		
+		con = DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521:orcl","inhog","inhog");
+
+		ServerSocket ss = new ServerSocket(10001);
+
+		while (true) {
+			Socket s = ss.accept();
+
+			Table t = new Table(this, s, con); //내 아이피
+
+			t.start();
+		}
+	}
 	
-	public static void main(String[] args) {
-		new Sushi_Store();
+	public static void main(String[] args) throws Exception {
+		Sushi_Store store = new Sushi_Store();
+		store.initNet();
 	}
 }
