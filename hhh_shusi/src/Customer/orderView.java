@@ -1,11 +1,15 @@
 package Customer;
 
-import javax.swing.*;
-import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.table.*;
 
+import vo.MenuVO;
+import vo.OrderVO;
 // Create by Inho 2018. 4. 21. 오후 4:56:44
 /**
  * 18.04.21 수정내용
@@ -19,17 +23,20 @@ import java.util.ArrayList;
  *
  */
 
-public class orderView extends JFrame implements ActionListener{
+// Create by Inho 2018. 4. 23. 오후 2:14:04
+public class orderView extends JFrame implements Runnable,ActionListener{
 	
 	//	orderView()
+	final String TableNo="01";
+	String customerNo;
 	ImageIcon[] sushiIcon,mealIcon,drinkIcon;
-	JPanel NorthPane,CenterPane,Tablepanel,TablePanel_South,sendPanel,TablePanel_Center,TablePanel_North,deletePanel;
+	JPanel NorthPanel,CenterPanel,Tablepanel,TablePanel_South,sendPanel,TablePanel_Center,TablePanel_North,deletePanel;
 	JLabel lblBrandName,lblOrderList;
 	JTabbedPane	MenuTab;
 	JScrollPane	scrollPane_1,scrollPane_2,scrollPane_3;
 	JButton[] sushi,meal,drink;
 	JButton	bSendorder,bDeleteorder;
-	JPanel sushiPane,mealPane,drinkPane;
+	JPanel sushiPanel,mealPanel,drinkPanel;
 	String [] columnNames = {"번호","주문명","수량"};
 
 	//	addMenu
@@ -40,26 +47,45 @@ public class orderView extends JFrame implements ActionListener{
 
 	//	sendOrder
 	orderModel	Model;
-	
+	HashMap<String, String> menuList;
+	HashMap<String, String> menuList2;
+
 	//	getMenuInfo
 	MenuVO[] MenuInfo;
 	ArrayList<MenuVO> sushiList,mealList,drinkList;
 	
-	public orderView() {		// 생성자
+	// Socket 
+	private Socket socket;
+	private PrintWriter pw;
+	private BufferedReader br;
+	private String line;
+	
+	public orderView(Socket socket) {		// 생성자
+		this.socket = socket;
+		try {
+			pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF-8"));
+			br = new BufferedReader(new InputStreamReader(socket.getInputStream(),"UTF-8"));
+		} catch (IOException e) {
+			System.out.println("소켓데이터 읽어오기 / 쓰기 실패:" + e.getMessage());
+		}	
+		// DB 연결
 		connectDB();
+		// menu 테이블에서 데이터 가져오기
 		getMenuInfo();
+		sendCustomerNO(TableNo);
 		addLayout();
 		eventProc();
+		setResizable(false);
 		setVisible(true);
-		setSize(500,600);
+		setSize(800,600);
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 	}
 	
 	public void addLayout(){		// 화면 구성 메서드
 		tableModel = new DefaultTableModel(null,columnNames);
 		tableMenu = new JTable(tableModel);
-		NorthPane = new JPanel();
-		CenterPane = new JPanel();
+		NorthPanel = new JPanel();
+		CenterPanel = new JPanel();
 		Tablepanel = new JPanel();
 		TablePanel_South = new JPanel();
 		sendPanel = new JPanel();
@@ -67,12 +93,12 @@ public class orderView extends JFrame implements ActionListener{
 		TablePanel_North = new JPanel();
 		TablePanel_North.setLayout(new FlowLayout());
 		TablePanel_Center = new JPanel();
-		sushiPane = new JPanel();
-		mealPane = new JPanel();
-		drinkPane = new JPanel();
-		sushiPane.setLayout(new GridLayout(3, 3));
-		mealPane.setLayout(new GridLayout(3, 3, 0, 0));
-		drinkPane.setLayout(new GridLayout(3, 3, 0, 0));
+		sushiPanel = new JPanel();
+		mealPanel = new JPanel();
+		drinkPanel = new JPanel();
+		sushiPanel.setLayout(new GridLayout(3, 3));
+		mealPanel.setLayout(new GridLayout(3, 3, 0, 0));
+		drinkPanel.setLayout(new GridLayout(3, 3, 0, 0));
 		// 화면을 구성할 때 DB에서 메뉴테이블의 갯수를 받아와서 화면구성을 해야함.
 				
 		sushi = new JButton[sushiList.size()];
@@ -88,29 +114,32 @@ public class orderView extends JFrame implements ActionListener{
 		
 		// 버튼객체에 Text와 Image 삽입
 		for(int i = 0; i<sushiList.size();i++){
-			sushi[i] = new JButton(sushiList.get(i).getName(),new ImageIcon(sushiList.get(i).getImageloc()));
+			sushi[i] = new JButton(null/*sushiList.get(i).getName()*/,new ImageIcon(sushiList.get(i).getImage()));
+			sushi[i].setPreferredSize(new Dimension(120,120));
 		}
 		for(int i = 0; i<drinkList.size();i++){
-			drink[i] = new JButton(drinkList.get(i).getName(),new ImageIcon(drinkList.get(i).getImageloc()));
+			drink[i] = new JButton(null/*drinkList.get(i).getName()*/,new ImageIcon(drinkList.get(i).getImage()));
+			drink[i].setPreferredSize(new Dimension(120,120));
 		}
 		for(int i = 0; i<mealList.size();i++){
-			meal[i] = new JButton(mealList.get(i).getName(),new ImageIcon(mealList.get(i).getImageloc()));
+			meal[i] = new JButton(null/*mealList.get(i).getName()*/,new ImageIcon(mealList.get(i).getImage()));
+			meal[i].setPreferredSize(new Dimension(120,120));
 		}
 		//TabPane에 버튼 삽입
 		for(int i=0;i<sushi.length;i++){
-			sushiPane.add(sushi[i]);
+			sushiPanel.add(sushi[i]);
 		}
 		for(int i=0;i<meal.length;i++){
-			mealPane.add(meal[i]);
+			mealPanel.add(meal[i]);
 		}
 		for(int i=0;i<drink.length;i++){
-			drinkPane.add(drink[i]);
+			drinkPanel.add(drink[i]);
 		}
 
 		
-		scrollPane_1 = new JScrollPane(sushiPane);
-		scrollPane_2 = new JScrollPane(mealPane);
-		scrollPane_3 = new JScrollPane(drinkPane);
+		scrollPane_1 = new JScrollPane(sushiPanel);
+		scrollPane_2 = new JScrollPane(mealPanel);
+		scrollPane_3 = new JScrollPane(drinkPanel);
 		
 		lblBrandName = new JLabel("ㅎㅎㅎ_Sushi");
 		lblOrderList = new JLabel("ㅎㅎㅎSushi 주문내역");
@@ -120,21 +149,21 @@ public class orderView extends JFrame implements ActionListener{
 		
 		MenuTab = new JTabbedPane(JTabbedPane.TOP);
 
-		getContentPane().add(NorthPane, BorderLayout.NORTH);
-		getContentPane().add(CenterPane, BorderLayout.CENTER);
-		NorthPane.setLayout(new GridLayout(0, 1, 0, 0));
+		getContentPane().add(NorthPanel, BorderLayout.NORTH);
+		getContentPane().add(CenterPanel, BorderLayout.CENTER);
+		NorthPanel.setLayout(new GridLayout(0, 1, 0, 0));
 
-		NorthPane.add(lblBrandName);
+		NorthPanel.add(lblBrandName);
 		
-		CenterPane.setLayout(new GridLayout(1, 2, 0, 0));
+		CenterPanel.setLayout(new GridLayout(1, 2, 0, 0));
 		
-		CenterPane.add(MenuTab);
+		CenterPanel.add(MenuTab);
 		
 		MenuTab.addTab("스시류", scrollPane_1);
 		MenuTab.addTab("식사류", scrollPane_2);
 		MenuTab.addTab("주류", scrollPane_3);
 		
-		CenterPane.add(Tablepanel);
+		CenterPanel.add(Tablepanel);
 		Tablepanel.setLayout(new BorderLayout(0, 0));
 		Tablepanel.add(TablePanel_South, BorderLayout.SOUTH);
 		
@@ -160,13 +189,17 @@ public class orderView extends JFrame implements ActionListener{
 			sushiList = new ArrayList<MenuVO>();
 			mealList = new ArrayList<MenuVO>();
 			drinkList = new ArrayList<MenuVO>();
+			menuList = new HashMap<String,String>();
+			menuList2 = new HashMap<String,String>();
 			for(int i=0;i<mvo.size();i++){
 				MenuInfo[i] = new MenuVO();
 				MenuInfo[i].setMenuCode(mvo.get(i).get(0));
 				MenuInfo[i].setName(mvo.get(i).get(1));
 				MenuInfo[i].setPrice(mvo.get(i).get(2));
 				MenuInfo[i].setCategory(mvo.get(i).get(3));
-				MenuInfo[i].setImageloc(mvo.get(i).get(4));
+				MenuInfo[i].setImage(mvo.get(i).get(4));
+				menuList.put(mvo.get(i).get(1), mvo.get(i).get(0));
+				menuList2.put(mvo.get(i).get(1),String.valueOf(i));
 				//여기서 가져올 때 아예 카테고리 별로 데이터를 넣고,(초밥류,식사류,주류) 각 객체의 크기만큼 메모리를 할당한다.
 				// ArrayList로 데이터를 받음.
 				if(mvo.get(i).get(3).equals("초밥류")){
@@ -207,6 +240,21 @@ public class orderView extends JFrame implements ActionListener{
 		
 	}
 	
+	public void sendCustomerNO(String tableNo){
+		// SQL 문을 실행해서 customer 테이블에 시퀀스로 컬럼하나 만든다.
+		// 만든 컬럼의 데이터(customer_no)를 가져와서 인스턴스의 customerNO로 초기화 해준다.
+		// 이 2개의 SQL 문을 하나의 메서드에서 한번 해보자.
+		try {
+//			customerNo = Model.addCustomerNO(tableNo);
+			// 이렇게 말고 서버에 쏴준다.
+			String send = "table" + "|token|" + tableNo; 
+			pw.println(send);
+			pw.flush();
+		} catch (Exception e) {
+			System.out.println("고객번호 삽입 실패 : "+e.getMessage());
+		}
+	}
+
 	public void addMenu(int no){	// 왼쪽 버튼을 누르면 메뉴테이블에 메뉴를 추가하는 메서드
 		String[] addorder= {String.valueOf(tableModel.getRowCount()+1),MenuInfo[no].getName(),String.valueOf(cntMenu[no])};
 //		테이블에 값이 있으면
@@ -255,10 +303,21 @@ public class orderView extends JFrame implements ActionListener{
 		// 테이블의 데이터 수 만큼 반복
 		for(int i=0;i<tableModel.getRowCount();i++){
 			String[] a = {(String) tableModel.getValueAt(i, 0),(String) tableModel.getValueAt(i, 1),(String) tableModel.getValueAt(i, 2)};
-			try {
-				Model.sendOrder(a);
-			} catch (Exception e) {
-				System.out.println("주문 전솔실패 : " + e.getMessage());
+			for(int j = 0 ;j<Integer.valueOf((String)tableModel.getValueAt(i, 2));j++){
+				try {
+					cntMenu[Integer.valueOf(menuList2.get((String) tableModel.getValueAt(i, 1)))] = 1;
+					ArrayList<OrderVO> send = new ArrayList<OrderVO>();
+					OrderVO vo = new OrderVO();
+					vo.setCustomerNo(customerNo);
+					vo.setMenuCode(menuList.get(a[1]));
+					send.add(vo);
+					String Order = "Order" +"|token|";
+					Order += send.get(0).getOrderNo()+"|token|"+send.get(0).getCustomerNo()+"|token|"+send.get(0).getMenuCode()+"|token|"+send.get(0).getPaymentNo()+"|token|"+send.get(0).getOrdertime();
+					pw.println(Order);
+					pw.flush();
+				} catch (Exception e) {
+					System.out.println("주문 전송실패 : " + e.getMessage());
+				}
 			}
 		}
 		for(int i=0;i<tableModel.getRowCount();){
@@ -282,19 +341,38 @@ public class orderView extends JFrame implements ActionListener{
 			}
 			for(int i =0;i<mealList.size();i++){
 				if(evt == meal[i])
-				addMenu(j);
-				j++;
+					addMenu(j);
+					j++;
 			}
 			for(int i=0;i<drinkList.size();i++){
 				if(evt == drink[i])
-				addMenu(j);
-				j++;
+					addMenu(j);
+					j++;
 			}
 		}
 	}
-	
-	public static void main(String[] args) {
-		new orderView();
+
+	@Override
+	public void run(){
+		boolean finish = false;
+		try {
+			while((line = br.readLine())!= null){
+				System.out.println(line + "읽음");
+				String array[] = line.split("\\|token\\|");
+				
+				switch(array[0]){
+					case "CUSTOMERNO":	// CUSTOMER_NO 할당받기.
+						customerNo = array[1];
+						System.out.println(customerNo);
+						break;
+					case "Bye":
+						finish = true;
+				}
+				if(finish)
+					break;
+			}
+		} catch (IOException e) {
+			System.out.println("Run 메서드 실행 실패 : "+e.getMessage());
+		}
 	}
-	
 }

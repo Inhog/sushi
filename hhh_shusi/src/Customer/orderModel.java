@@ -47,7 +47,33 @@ public class orderModel {
 		// 6. 닫기
 		ps.close();
 	}
-	
+	public String addCustomerNO(String tableNO)throws Exception{
+		String customerNo;
+		// SQL 문장 1
+		String sql = "INSERT INTO customer(customer_no,table_no) VALUES SQ_CUSTOMER_NO.NEXTVAL,?";
+		System.out.println(sql);
+		// SQL 전송객체
+		ps = con.prepareStatement(sql);
+		
+		// SQL 전송
+		ps.executeQuery();
+		
+		String sql2 ="SELECT customer_no FROM (SELECT * FROM customer WHERE table_no = ? ORDER BY customer_no desc) WHERE rownum =1";
+		System.out.println(sql2);
+		
+		// SQL 전송객체 
+		ps = con.prepareStatement(sql2);
+		
+		// SQL 전송
+		ResultSet rs = ps.executeQuery();
+		customerNo = String.valueOf(rs);
+		
+		// 닫기
+		rs.close();
+		ps.close();
+		
+		return customerNo;
+	}
 	public ArrayList<ArrayList<String>> getMenucount() throws Exception{
 		// SQL 문장
 		String sql = "SELECT MENU_CODE,NAME,PRICE,CATEGORY,IMAGE FROM MENU";

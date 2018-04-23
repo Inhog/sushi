@@ -9,10 +9,6 @@ import Customer.orderView;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import net.miginfocom.swing.MigLayout;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
 import javax.swing.GroupLayout.Alignment;
 
 public class Table_orderView  extends JFrame implements ActionListener{
