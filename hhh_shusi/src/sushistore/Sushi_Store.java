@@ -21,20 +21,25 @@ public class Sushi_Store{
 
 		// 각각의 화면을 구성하는 클래스 객체 생성
 		storeMgt = new StoreMgtView();
-		stock	 = new StockView();			//준홍이 작업
+		stock	 = new StockView();				//준홍이 작업
 //		table_order = new Table_orderView();	//수형 작업
-//		payment = new PaymentView();		//준홍 작업
+//		payment = new PaymentView();			//준홍 작업
 		
 //		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 	}
 	
 	void initNet() throws Exception {
 		
+<<<<<<< HEAD
 		// 1. 드라이버로딩
 		Class.forName("oracle.jdbc.driver.OracleDriver");
 		// 2. Connection 연결객체 얻어오기
 		con = DriverManager.getConnection("jdbc:oracle:thin:@127.0.0.1:1521:orcl","inhog","inhog");
 		// 서버소켓 Port번호 지정.
+=======
+		con = DriverManager.getConnection("jdbc:oracle:thin:@m150112:1521:orcl","inhog","inhog");
+
+>>>>>>> 9f26f85c4790f79c63ba7d95fa03dc9e21d02160
 		ServerSocket ss = new ServerSocket(10001);
 
 		while (true) {
