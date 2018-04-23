@@ -25,19 +25,11 @@ import model.OrderModel;
 import vo.MenuVO;
 import vo.OrderVO;
 
-<<<<<<< HEAD
 public class Table_orderView extends JFrame implements ActionListener {
 	final int MENU_ROW_SIZE = 4;
 	final int MENU_COL_SIZE = 3;
 	final int DEFAULT_MENU_PANEL_SIZE = MENU_ROW_SIZE * MENU_COL_SIZE ;
-=======
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import javax.swing.GroupLayout.Alignment;
 
-public class Table_orderView  extends JFrame implements ActionListener{
->>>>>>> 7e54b9d0aa2d67b248e7bda55e5d6e53f1c8fdae
 	
 	private String tableNo;
 	private String customerNo;

@@ -4,7 +4,6 @@ package vo;
   * Created by clap on 2018. 4. 19. 오후 5:49:19
   */
 public class OrderVO {
-<<<<<<< HEAD
 	String 	orderNo, customerNo, menuCode, paymentNo, ordertime;
 	
 	public OrderVO(){}
@@ -13,11 +12,7 @@ public class OrderVO {
 		this.customerNo = customerNo;
 		this.menuCode = menuCode;
 	}
-=======
-	String 	orderNo, customerNo, menuCode, paymentNo,ordertime;
-	
-	public OrderVO(){}
->>>>>>> 7e54b9d0aa2d67b248e7bda55e5d6e53f1c8fdae
+
 	public OrderVO(String orderNo, String customerNo, String menuCode, String paymentNo, String ordertime) {
 		super();
 		this.orderNo = orderNo;
