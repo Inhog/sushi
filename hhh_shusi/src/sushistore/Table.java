@@ -35,7 +35,6 @@ class Table extends Thread{
 				System.out.println(line+"읽음");
 				
 				String array[] = line.split("\\|token\\|");
-<<<<<<< HEAD
 				// "|token|"으로 String 나눔.
 				switch(array[0]){		// array[0] : 키워드
 				case "table":			// array[1] : TableNo
@@ -43,19 +42,13 @@ class Table extends Thread{
 				case "Order":			// array[1] : tOrderNo , array[2] : CustomerNo
 										// , array[3] : MenuCode, array[4] : PaymentNo, array[5] :Ordertime
 					
-=======
 				/* 인호*** array배열에 어떤형식으로 string이 쪼개지는지 알려주삼*/
 				/* 수형*** customerModel 생성 for "table"
 				 * 		  "order는 .. orderModel에 있는거에 쓰면 됨.*/
-				switch(array[0]){
-				case "table":
-					
-					break;
-				case "Order":
+				
 					/*Table_orderView의 
 					 * addOrder(ArrayList<OrderVO> orderVOList)쓰면 직방임, orderVOList 체크 바람.
 					 * 참고 : sourceCode: 389~408 */
->>>>>>> 9f26f85c4790f79c63ba7d95fa03dc9e21d02160
 					break;
 				}
 				
