@@ -10,12 +10,6 @@ import model.DBconnection;
 // Create by Inho 2018. 4. 21. 오후 5:00:05
 
 
-/***
- * 사실상 여기는 필요없는 소스코드
- * @author Inhog
- *
- */
-
 public class orderModel {
 	static Connection con;
 	String url;

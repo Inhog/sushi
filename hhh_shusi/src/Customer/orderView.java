@@ -23,19 +23,11 @@ import vo.OrderVO;
  *
  */
 
-
-// Create by Inho 2018. 4. 23. 오후 11:33:59
-/**
- * 
- * 18.04.23
- * 
- *
- */
+// Create by Inho 2018. 4. 23. 오후 2:14:04
 public class orderView extends JFrame implements Runnable,ActionListener{
 	
 	//	orderView()
 	final String TableNo="01";
-	// 같은 내용으로 TableNo를 01,02,03으로 3개의 소스코드를 만든다. 
 	String customerNo;
 	ImageIcon[] sushiIcon,mealIcon,drinkIcon;
 	JPanel NorthPanel,CenterPanel,Tablepanel,TablePanel_South,sendPanel,TablePanel_Center,TablePanel_North,deletePanel;
@@ -248,13 +240,14 @@ public class orderView extends JFrame implements Runnable,ActionListener{
 		
 	}
 	
-	public void sendCustomerNO(String tableNo){	// Sushi_Store에 실행된 TableNo을 보낸다.
-		//	여기서 TableNo을 전송하면 받아서 
-		//	Sushi_store에서 Model 객체를 통해 SQL문을 수행하여
-		//	고객번호를 DB에 생성한다.
+	public void sendCustomerNO(String tableNo){
+		// SQL 문을 실행해서 customer 테이블에 시퀀스로 컬럼하나 만든다.
+		// 만든 컬럼의 데이터(customer_no)를 가져와서 인스턴스의 customerNO로 초기화 해준다.
+		// 이 2개의 SQL 문을 하나의 메서드에서 한번 해보자.
 		try {
+//			customerNo = Model.addCustomerNO(tableNo);
+			// 이렇게 말고 서버에 쏴준다.
 			String send = "table" + "|token|" + tableNo; 
-			// TableNo을 전송하는 형식
 			pw.println(send);
 			pw.flush();
 		} catch (Exception e) {
@@ -310,21 +303,15 @@ public class orderView extends JFrame implements Runnable,ActionListener{
 		// 테이블의 데이터 수 만큼 반복
 		for(int i=0;i<tableModel.getRowCount();i++){
 			String[] a = {(String) tableModel.getValueAt(i, 0),(String) tableModel.getValueAt(i, 1),(String) tableModel.getValueAt(i, 2)};
-			for(int j = 0 ;j<Integer.valueOf((String)tableModel.getValueAt(i, 2));j++){	// 주문의 수량만큼 또 반복
+			for(int j = 0 ;j<Integer.valueOf((String)tableModel.getValueAt(i, 2));j++){
 				try {
-					// 해당 메뉴의 카운트를 1로 초기화
 					cntMenu[Integer.valueOf(menuList2.get((String) tableModel.getValueAt(i, 1)))] = 1;
-					// 하나씩 보낼꺼라 ArrayList로 보낼필요는 없음.
-					// 객체를 전송하는 틀을 만들기 위해 작성함.
-					// 바로 OrderVO 객체를 String으로 붙여서 전송해도 상관없음.
 					ArrayList<OrderVO> send = new ArrayList<OrderVO>();
 					OrderVO vo = new OrderVO();
 					vo.setCustomerNo(customerNo);
 					vo.setMenuCode(menuList.get(a[1]));
 					send.add(vo);
-					// "Order" 주문 String 임을 확인하는 키워드.
 					String Order = "Order" +"|token|";
-					
 					Order += send.get(0).getOrderNo()+"|token|"+send.get(0).getCustomerNo()+"|token|"+send.get(0).getMenuCode()+"|token|"+send.get(0).getPaymentNo()+"|token|"+send.get(0).getOrdertime();
 					pw.println(Order);
 					pw.flush();
@@ -333,7 +320,6 @@ public class orderView extends JFrame implements Runnable,ActionListener{
 				}
 			}
 		}
-		// 전송했으면 테이블을 비운다.
 		for(int i=0;i<tableModel.getRowCount();){
 			tableModel.removeRow(i);
 		}
@@ -346,7 +332,7 @@ public class orderView extends JFrame implements Runnable,ActionListener{
 			deleteMenu(tableMenu.getSelectedRow());
 		}else if(evt == bSendorder){
 			sendOrder(tableModel);
-		}else{		// 이부분은 수형이형이 한것처럼 의미있게 수정.
+		}else{
 			int j =0;
 			for(int i =0;i<sushiList.size();i++){
 				if(evt == sushi[i])
@@ -367,19 +353,19 @@ public class orderView extends JFrame implements Runnable,ActionListener{
 	}
 
 	@Override
-	public void run(){			// 서버소켓에서 보내는 정보를 받는 메서드(Runnable, Thread)?
+	public void run(){
 		boolean finish = false;
 		try {
 			while((line = br.readLine())!= null){
 				System.out.println(line + "읽음");
 				String array[] = line.split("\\|token\\|");
 				
-				switch(array[0]){		// array[0] : 데이터를 구분하기 위한 키워드 
-					case "CUSTOMERNO":	// 이 인스턴스 객체의 CustomerNo를 지정함.
+				switch(array[0]){
+					case "CUSTOMERNO":	// CUSTOMER_NO 할당받기.
 						customerNo = array[1];
-//						System.out.println(customerNo);
+						System.out.println(customerNo);
 						break;
-					case "Bye":		// 굳이 필요없는 부분.
+					case "Bye":
 						finish = true;
 				}
 				if(finish)
