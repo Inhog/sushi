@@ -38,7 +38,6 @@ public class StoreMgtView extends JFrame implements ActionListener{
 		setSize(800, 600);
 		setVisible(true);
 
-		
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		
 	}
@@ -145,8 +144,20 @@ public class StoreMgtView extends JFrame implements ActionListener{
 		}
 		
 	}
-
-
+	
+	public void isEating(String tableNo, boolean isEating){
+		if(tableNo.equals("01")){
+			if( isEating == true) bTable1.setText("테이블"+tableNo+"\n 식사중입니다.");
+			else bTable1.setText("테이블"+tableNo);
+		}else if(tableNo.equals("02")){
+			if( isEating == true) bTable2.setText("테이블"+tableNo+"\n 식사중입니다.");
+			else bTable2.setText("테이블"+tableNo);
+		}else if(tableNo.equals("03")){
+			if( isEating == true) bTable3.setText("테이블"+tableNo+"\n 식사중입니다.");
+			else bTable3.setText("테이블"+tableNo);
+		}
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object evt = e.getSource();

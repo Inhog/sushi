@@ -31,11 +31,11 @@ import vo.OrderVO;
  * 
  *
  */
-public class orderView extends JFrame implements Runnable,ActionListener{
+public class orderView3 extends JFrame implements Runnable,ActionListener{
 	
 	//	orderView()
 	final int MenuSize = 12;
-	final String TableNo="01";
+	final String TableNo="03";
 	// 같은 내용으로 TableNo를 01,02,03으로 3개의 소스코드를 만든다. 
 	String customerNo;
 	ImageIcon[] sushiIcon,mealIcon,drinkIcon;
@@ -69,7 +69,7 @@ public class orderView extends JFrame implements Runnable,ActionListener{
 	private BufferedReader br;
 	private String line;
 	
-	public orderView(Socket socket) {		// 생성자
+	public orderView3(Socket socket) {		// 생성자
 		this.socket = socket;
 		try {
 			pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF-8"));
@@ -93,11 +93,8 @@ public class orderView extends JFrame implements Runnable,ActionListener{
 			@Override
 			public void windowClosing(WindowEvent R_WE)
 			{
-				new Customer();
+				new Customer3();
 				setVisible(false); // 고객 주문 창 닫기
-				String send = "OUT" + "|token|" + TableNo; 
-				pw.println(send);
-				pw.flush();
 			}
 		});	}
 	
