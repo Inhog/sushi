@@ -8,12 +8,12 @@ import java.awt.event.*;
 
 // Create by Inho 2018. 4. 23. 오후 11:43:17
 
-public class Customer extends JFrame{
+public class Customer3 extends JFrame{
 	private Socket socket;
 	private PrintWriter pw;
 	private BufferedReader br;
 	
-	public Customer(){
+	public Customer3(){
 		try {
 			// Socket(IPaddress,Portno)
 			socket = new Socket("M150112", 10001);
@@ -28,7 +28,7 @@ public class Customer extends JFrame{
 			Join_Button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					try {
-						Runnable r = new orderView(socket);
+						Runnable r = new orderView3(socket);
 						Thread t = new Thread(r);
 						t.start();
 						setVisible(false);
@@ -46,6 +46,6 @@ public class Customer extends JFrame{
 
 
 	public static void main(String[] args) {
-		new Customer();					
+		new Customer3();					
 	}
 }
