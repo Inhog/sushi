@@ -95,6 +95,9 @@ public class orderView extends JFrame implements Runnable,ActionListener{
 			{
 				new Customer();
 				setVisible(false); // 고객 주문 창 닫기
+				String send = "OUT" + "|token|" + TableNo; 
+				pw.println(send);
+				pw.flush();
 			}
 		});	}
 	
