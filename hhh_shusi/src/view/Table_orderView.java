@@ -52,7 +52,7 @@ public class Table_orderView extends JFrame implements ActionListener {
 	MenuModel 		menuModel;
 	OrderModel 		orderModel;
 	CustomerModel 	customerModel;
-	
+	Table_orderView table_orderView;
 	// 전체 메뉴리스트를 담아두는 변수
 	ArrayList<ArrayList<MenuVO>> wholeMenuList;
 
@@ -339,7 +339,7 @@ public class Table_orderView extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object evt = e.getSource();
 		
-		if ( evt == paymentBtn ) payment();
+		if ( evt == paymentBtn ) new PaymentView(customerNo,this);
 		else if ( evt == addBtn ){
 			//makeOrderList(orderList) =>	orderList를 받아 OrderVO들로 구성된 orderVOList를 생성
 			addOrder(makeOrderList(orderList));		//orderVO로 구성된 ArrayList를 model을 통해 db에 추가(insert)
@@ -352,7 +352,6 @@ public class Table_orderView extends JFrame implements ActionListener {
 			if( tableMenu.getSelectedRow() != -1 ){
 				deleteMenu(tableMenu.getSelectedRow());
 			}
-			
 		}else{
 			//눌려진 버튼의 인덱스를 바로 찾아냄.
 			//만일 창의 크기, 버튼의 크기가 변경시 반드시 확인 필요***************

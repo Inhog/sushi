@@ -1,47 +1,27 @@
 package view;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import javax.swing.*;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
+import Customer.orderModel;
+import model.PaymentModel;
+import sushistore.Sushi_Store;
 
 public class PaymentView extends JFrame implements ActionListener {
-	private JTextField tfPaymentNum, tfChang, tfTotalCash, tfReceiveCash, tfReturnCash;
+	private JTextField tfPaymentNum, tfTotalCash, tfReceiveCash, tfReturnCash;
+	private JTextArea taChang;
 	private JLabel lbPaymentNum, lbTotalCash, lbReceiveCash, lbReturnCash;
 	private JButton btCashPayment, btCardPayment;
 	public JTable orderLIst;
+	public PaymentModel paymentModel;
+	String customerNo,totalPrice;
+	Table_orderView table_orderView;
 	
-
 	public void addLayout() {
 		getContentPane().setLayout(null);
 
-		JPanel panel = new JPanel();
-		panel.setBounds(14, 12, 268, 371);
-		getContentPane().add(panel);
-		panel.setLayout(null);
-		
-		JTextArea taOrderReceive = new JTextArea();
-		taOrderReceive.setBounds(14, 56, 240, 303);
-		panel.add(taOrderReceive);
-		
-		JLabel lblNewLabel = new JLabel("ㅎㅎㅎSushi 주문내역  ");
-		lblNewLabel.setBounds(14, 12, 240, 18);
-		panel.add(lblNewLabel);
-		
-		JLabel label = new JLabel("============================");
-		label.setBounds(14, 36, 240, 18);
-		panel.add(label);
-
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(287, 12, 268, 371);
+		panel_1.setBounds(25, 10, 268, 322);
 		getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 
@@ -50,48 +30,51 @@ public class PaymentView extends JFrame implements ActionListener {
 		panel_1.add(lbPaymentNum);
 
 		tfPaymentNum = new JTextField();
+		tfPaymentNum.setEditable(false);
+		tfPaymentNum.setText(customerNo);
 		tfPaymentNum.setBounds(116, 22, 116, 24);
 		panel_1.add(tfPaymentNum);
-		tfPaymentNum.setColumns(10);
-
-		tfChang = new JTextField();
-		tfChang.setBounds(25, 66, 207, 86);
-		panel_1.add(tfChang);
-		tfChang.setColumns(10);
+		
+		taChang = new JTextArea();
+		taChang.setText("현금 결제시 받은 금액을 입력한 뒤 \n 현금 결제 버튼을 눌러주세요. \n\n 카드 결제시 카드 결제 버튼을 누른 뒤 \n 카드를 이용해 결제를 시도해주세요.");
+		
+		taChang.setEditable(false);
+		taChang.setBounds(25, 66, 207, 110);
+		panel_1.add(taChang);
 
 		JLabel lbTotalCash = new JLabel("총 금액");
-		lbTotalCash.setBounds(25, 182, 62, 18);
+		lbTotalCash.setBounds(25, 189, 62, 18);
 		panel_1.add(lbTotalCash);
 
 		JLabel lbReceiveCash = new JLabel("받은금액");
-		lbReceiveCash.setBounds(25, 214, 62, 18);
+		lbReceiveCash.setBounds(25, 221, 62, 18);
 		panel_1.add(lbReceiveCash);
 
 		JLabel lbReturnCash = new JLabel("반환금액");
-		lbReturnCash.setBounds(25, 244, 62, 18);
+		lbReturnCash.setBounds(25, 251, 62, 18);
 		panel_1.add(lbReturnCash);
 
 		tfTotalCash = new JTextField();
-		tfTotalCash.setColumns(10);
-		tfTotalCash.setBounds(116, 179, 116, 24);
+		tfTotalCash.setEditable(false);
+		tfTotalCash.setText(totalPrice);
+		tfTotalCash.setBounds(116, 186, 116, 24);
 		panel_1.add(tfTotalCash);
 
 		tfReceiveCash = new JTextField();
-		tfReceiveCash.setColumns(10);
-		tfReceiveCash.setBounds(116, 211, 116, 24);
+		tfReceiveCash.setBounds(116, 218, 116, 24);
 		panel_1.add(tfReceiveCash);
 
 		tfReturnCash = new JTextField();
-		tfReturnCash.setColumns(10);
-		tfReturnCash.setBounds(116, 241, 116, 24);
+		tfReturnCash.setEditable(false);
+		tfReturnCash.setBounds(116, 248, 116, 24);
 		panel_1.add(tfReturnCash);
 
 		btCashPayment = new JButton("현금 결제");
-		btCashPayment.setBounds(14, 306, 105, 27);
+		btCashPayment.setBounds(12, 279, 105, 27);
 		panel_1.add(btCashPayment);
 
 		btCardPayment = new JButton("카드 결제 ");
-		btCardPayment.setBounds(133, 306, 105, 27);
+		btCardPayment.setBounds(131, 279, 105, 27);
 		panel_1.add(btCardPayment);
 	}
 
@@ -101,40 +84,66 @@ public class PaymentView extends JFrame implements ActionListener {
 		tfReceiveCash.addActionListener(this);
 	}
 
-	public PaymentView() {
+	public PaymentView(String customerNo,Table_orderView table_orderView) {
+		this.customerNo = customerNo;
+		this.table_orderView = table_orderView;
+		connectDB();
+		getTotalPrice();
 		addLayout();
 		eventProc();
-		setSize(800, 600);
+		setSize(326, 375);
 		setResizable(false);
 		setVisible(true);
 		
 	}
+	
+	public void connectDB(){	// DB 연결 메서드
+		try{
+			paymentModel = new PaymentModel();
+			System.out.println("고객주문화면 디비연결 성공");
+		}catch(Exception ex){
+			System.out.println("고객주문화면 연결실패 :" +ex.getMessage());
+		}
+		
+	}
+	public void getPaymentNo(String method){
+		paymentModel.getPaymentNo(totalPrice,method);
 
+	}
+	public void setPaymentNo(){
+		paymentModel.setPaymentNo(customerNo);
+	}
+	
+	public void getTotalPrice(){
+		totalPrice = paymentModel.getTotalPrice(customerNo);
+	}
+	
 	public void actionPerformed(ActionEvent ev) {
 		Object evt = ev.getSource();
-		int total = 0; // 총 금액을 저장
-		int rece = 0; // 받은 금액을 문자열로 저장
-		int Rt = 0;
-		
-		if (evt == btCashPayment) {
-			total = Integer.parseInt(tfTotalCash.getText()); // 총 금액을 저장
-			rece = Integer.parseInt(tfReceiveCash.getText()); // 받은 금액을 문자열로 저장
-			Rt = Integer.parseInt(tfReturnCash.getText());
-			JOptionPane.showMessageDialog(null, "총금액:" + total + "\n받은금액:" + rece + "\n잔돈:" + Rt);
-			tfTotalCash.setText(null); // 총 금액을 저장
-			tfReceiveCash.setText(null); // 받은 금액을 문자열로 저장
-			tfReturnCash.setText(null);
-			System.exit(0);
-			//setVisible(false);
-		} else if (evt == tfReceiveCash) {
-			total = Integer.parseInt(tfTotalCash.getText()); // 총 금액을 저장
-			rece = Integer.parseInt(tfReceiveCash.getText()); // 받은 금액을 문자열로 저장
-			Rt = rece - total; // 거슬러줄 금액
-			tfReturnCash.setText(String.valueOf(Rt));
-		}
-	}
+		if(evt == btCashPayment){
+			int ItotalPrice = Integer.valueOf(tfTotalCash.getText());
+			int IreceivePrice = Integer.valueOf(tfReceiveCash.getText());
+			
+			tfReturnCash.setText(String.valueOf(IreceivePrice-ItotalPrice));
+			JOptionPane.showMessageDialog(null, "반환금액 : "+(IreceivePrice-ItotalPrice));
+			setPaymentNo();
+			getPaymentNo("현금");
+			setVisible(false);
+			table_orderView.setVisible(false);
 
-	public static void main(String[] args) {
-		new PaymentView();
+		}else if(evt == btCardPayment){
+			int ItotalPrice = Integer.valueOf(tfTotalCash.getText());
+			try {
+				Thread.sleep(3000);
+			} catch (Exception e) {
+				System.out.println("결제실패...:"+e.getMessage());
+			}
+			setPaymentNo();
+			getPaymentNo("카드");
+			JOptionPane.showMessageDialog(null, "결제가 완료되었습니다.");
+			setVisible(false);
+			table_orderView.setVisible(false);
+
+		}
 	}
 }
