@@ -151,11 +151,11 @@ public class StoreMgtView extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		Object evt = e.getSource();
 		if(evt == bTable1){
-//			new Table_orderView();
+			new Table_orderView("01");
 		}else if(evt == bTable2){
-//			new Table_orderView();
+			new Table_orderView("02");
 		}else if(evt == bTable3){
-//			new Table_orderView();
+			new Table_orderView("03");
 		}else if(evt == bStock){
 			if ( stock == null ) stock = new StockView();
 			stock.setVisible(true);
