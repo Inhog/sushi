@@ -33,7 +33,7 @@ public class Sushi_Store{
 		// 1. 드라이버로딩
 		Class.forName("oracle.jdbc.driver.OracleDriver");
 		// 2. Connection 연결객체 얻어오기
-		con = DriverManager.getConnection("jdbc:oracle:thin:@70.12.115.62:1521:orcl","inhog","inhog");
+		con = DriverManager.getConnection("jdbc:oracle:thin:@m150112:1521:orcl","inhog","inhog");
 		// 서버소켓 Port번호 지정.
 		ServerSocket ss = new ServerSocket(10001);
 
