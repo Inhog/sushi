@@ -341,6 +341,8 @@ public class Table_orderView extends JFrame implements ActionListener {
 			addOrder(makeOrderList(orderList));		//orderVO로 구성된 ArrayList를 model을 통해 db에 추가(insert)
 		}
 		else if ( evt == deleteBtn ){
+			
+			//선택된 테이블의 row 인덱스를 deleteMenu로 전달
 			deleteMenu(tableMenu.getSelectedRow());
 			
 		}else{
@@ -353,27 +355,31 @@ public class Table_orderView extends JFrame implements ActionListener {
 			if ( evt == sushiBtn[btnIndex] ){
 				orderList.add(wholeMenuList.get(MenuCategory.SUSHI.getOrder()).get(btnIndex));
 				displayOrder();
-			}
-			else if ( evt == dishBtn[btnIndex] ){
+			}else if ( evt == dishBtn[btnIndex] ){
 				orderList.add(wholeMenuList.get(MenuCategory.DISH.getOrder()).get(btnIndex));
 				displayOrder();
-			}
-			else if ( evt == drinkBtn[btnIndex] ){
+			}else if ( evt == drinkBtn[btnIndex] ){
 				orderList.add(wholeMenuList.get(MenuCategory.DRINK.getOrder()).get(btnIndex));
 				displayOrder();
 			}
 		}
 	}
+
+	//주문 버튼(sushiBtn, dishBtn, drinkBtn)의 인덱스를 좌표값으로 부터 바로 계산
 	public int getBtnIndex(int x, int y){
 		int index = y/130*3 + (x/120);
 		return index;
 	}
-	
+
+	//*****테스트 필요
+	//With DB
+	//미완성 payment()메서드
 	public void payment() {
 		// model.payment();
 	}
 
 	//*****테스트 필요
+	//With DB
 	//고객이 테이블에 앉아 시작을 누르면 customer DB에 insert하여 customerNo를 받아옴
 	public void getCustomerNo(String tableNo){
 		try {
@@ -384,7 +390,8 @@ public class Table_orderView extends JFrame implements ActionListener {
 		}
 	}
 	
-	
+
+	//for addOrder();
 	//MenuVO로 이루어진 orderList를 주문을 넣기 위한 OrderVO의 리스트로 변환
 	public ArrayList<OrderVO> makeOrderList(ArrayList<MenuVO> orderList){
 		
@@ -404,6 +411,7 @@ public class Table_orderView extends JFrame implements ActionListener {
 		return orderVOList;
 	}
 	
+	//With DB
 	//추가 주문을 ordertable에 추가.
 	public void addOrder(ArrayList<OrderVO> orderVOList) {
 		
@@ -419,11 +427,56 @@ public class Table_orderView extends JFrame implements ActionListener {
 		tableModel.fireTableDataChanged();
 	}
 
+	//추가주문 테이블에서 선택된 하나의 메뉴를 삭제
 	public void deleteMenu(int row) {
-		//
+		
+		//삭제하고자 하는 메뉴객체를 저장하기 위한 변수
+		MenuVO targetMenuVO = new MenuVO();
+		
+		//선택된 행에 추가되어있는 메뉴의 메뉴명과 동일한 행을 orderList에서 삭제
+		//1. 메뉴명 찾기 : col(1)은 메뉴명
+		String targetMenuName = (String)tableMenu.getValueAt(row, 1);
+		//2. 메뉴명으로 해당 객체 찾기 ( orderList에는 객체 형태로 들어가 있으므로)
+		
+			//2.0. 만약 3개 메뉴카테고리 중에서 메뉴명과 일치하는 객체를 찾으면 나머지에서 검색하지 않음.
+		boolean findOut = false;
+
+			// 2.1. sushiMenuList에서 탐색
+		for (int j = 0; j < wholeMenuList.get(MenuCategory.SUSHI.getOrder()).size(); j++) {
+			String compareMenuName = wholeMenuList.get(MenuCategory.SUSHI.getOrder()).get(j).getName();
+			if ( targetMenuName == compareMenuName ) {
+				targetMenuVO = wholeMenuList.get(MenuCategory.SUSHI.getOrder()).get(j);
+				findOut = true; break;
+			}
+		}
+			// 2.2. dishMenuList에서 탐색
+		for (int j = 0; j < wholeMenuList.get(MenuCategory.DISH.getOrder()).size(); j++) {
+			if ( findOut == true ) break;	//만일 앞의 검색(sushi)에서 값을 찾았으면 검색 종료
+			String compareMenuName = wholeMenuList.get(MenuCategory.DISH.getOrder()).get(j).getName();
+			if ( targetMenuName == compareMenuName ) {
+				targetMenuVO = wholeMenuList.get(MenuCategory.DISH.getOrder()).get(j);
+				findOut = true; break;
+			}
+		}
+			// 2.3. drinkMenuList에서 탐색
+		for (int j = 0; j < wholeMenuList.get(MenuCategory.DRINK.getOrder()).size(); j++) {
+			if ( findOut == true ) break;	//만일 앞의 검색(sushi, dish)에서 값을 찾았으면 검색 종료
+			String compareMenuName = wholeMenuList.get(MenuCategory.DRINK.getOrder()).get(j).getName();
+			if ( targetMenuName == compareMenuName ) {
+				targetMenuVO = wholeMenuList.get(MenuCategory.DRINK.getOrder()).get(j);
+				break;
+			}
+		}
+
+		orderList.remove(targetMenuVO);
 	}
+
 	
 	//주문을 한 개 씩 저장하고 있는 orderList를 Hashmap에 저장하여, 중복될 경우 수량을 1 늘려줌
+
+	//**현재 추가메뉴를 위한 데이터 구성 **
+	// orderList(추가 주문 음식을 1개씩 추가)=>orderListhHashMap(중복 시 수량+1 : 메뉴명, 수량)
+	//								  => orderLishWithCounter(hashMap을 arrayList로 변환한 값)
 	public void displayOrder(){
 		orderListHashMap = new HashMap<MenuVO, Integer>();
 		for (int i = 0; i < orderList.size(); i++) {
@@ -436,28 +489,32 @@ public class Table_orderView extends JFrame implements ActionListener {
 				orderListHashMap.put(orderList.get(i), orderListHashMap.get(orderList.get(i))+1);
 			}
 		}
-		//테이블 열 이름 생성
-//		ArrayList<String> columnVec = new ArrayList<String>();
-//		Collections.addAll(columnVec, columnNames);
 		
 		//hasMap의 정보를 화면(번호, 상품명, 수량)에 보여주기 위한 arrayList생성
 		ArrayList<ArrayList<String>> orderListWithCounter = new ArrayList<ArrayList<String>>();
 		Iterator<MenuVO> itr = orderListHashMap.keySet().iterator();
+		
+		//순번을 위한 변수
 		int rowOrder= 0;
 		
 		while ( itr.hasNext() ){
 			//각 행의 데이터 입력 (순번, 메뉴명, 수량)
 			ArrayList<String> row = new ArrayList<String>();
 			
+			//순번 입력
 			row.add(String.valueOf(rowOrder+1));
 			
 			MenuVO menu = itr.next();
 			
+			//메뉴명
 			row.add(menu.getName());
+			//메뉴 수량
 			row.add(orderListHashMap.get(menu).toString());
 			
+			//1행 추가.
 			orderListWithCounter.add(row);
 			
+			//순번 +1
 			rowOrder++;
 		}
 		//테이블에 전체 주문한 리스트 넣기
