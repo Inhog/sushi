@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 
 import model.MenuModel;
@@ -26,6 +27,8 @@ import model.CustomerModel;
 
 import vo.MenuVO;
 import vo.OrderVO;
+import java.awt.Color;
+import java.awt.Font;
 
 public class Table_orderView extends JFrame implements ActionListener {
 	final int MENU_ROW_SIZE = 4;
@@ -154,14 +157,20 @@ public class Table_orderView extends JFrame implements ActionListener {
 		//신규 추가 시 메뉴 표시를 위한 테이블
 		tableModel = new OrderTableModel();
 		tableMenu = new JTable(tableModel);
+			//테이블 디자인
+		tableMenu.setOpaque(true);
+		tableMenu.setBackground(Color.white);
 		
 		//전체 주문내역을 표시하기 위한 테이블
 		orderHistoryTableModel = new OrderTableModel();
 		orderHistoryTable = new JTable(orderHistoryTableModel);
+		orderHistoryTable.setBackground(Color.WHITE);
 				
 		NorthPane = new JPanel();
 		CenterPane = new JPanel();
+		CenterPane.setForeground(Color.WHITE);
 		Tablepanel = new JPanel();
+		
 		TablePanel_South = new JPanel();
 		paymentPanel = new JPanel();
 		deletePanel = new JPanel();
@@ -170,9 +179,13 @@ public class Table_orderView extends JFrame implements ActionListener {
 		FlowLayout flowLayout = (FlowLayout) TablePanel_North.getLayout();
 
 		TablePanel_Center = new JPanel();
+		TablePanel_Center.setBackground(new Color(255, 255, 255));
 		sushiPanel = new JPanel();
 		dishPanel = new JPanel();
 		drinkPanel = new JPanel();
+		sushiPanel.setBackground(Color.WHITE);
+		dishPanel.setBackground(Color.WHITE);
+		drinkPanel.setBackground(Color.WHITE);
 
 //		***************** 카테고리별 메뉴 버튼 생성  ********************
 		/**
@@ -190,9 +203,6 @@ public class Table_orderView extends JFrame implements ActionListener {
 		int dishMenuRowsize  = (dishMenuCount / 3) + 1  < MENU_ROW_SIZE ? MENU_ROW_SIZE : ( dishMenuCount / 3) + 1 ;
 		int drinkMenuRowsize = (drinkMenuCount / 3) + 1 < MENU_ROW_SIZE ? MENU_ROW_SIZE : (drinkMenuCount / 3) + 1 ;
 		
-//		sushiPanel.setLayout(new FlowLayout());
-//		dishPanel.setLayout(new FlowLayout());
-//		drinkPanel.setLayout(new FlowLayout());
 		sushiPanel.setLayout(new GridLayout(sushiMenuRowsize,MENU_COL_SIZE,0,0));
 		dishPanel.setLayout(new GridLayout(dishMenuRowsize,MENU_COL_SIZE,0,0));
 		drinkPanel.setLayout(new GridLayout(drinkMenuRowsize,MENU_COL_SIZE,0,0));
@@ -220,6 +230,8 @@ public class Table_orderView extends JFrame implements ActionListener {
 
 		//상단 (ㅎㅎㅎ 스시 라벨)
 		lblBrandName = new JLabel("ㅎㅎㅎ_Sushi");
+		lblBrandName.setFont(new Font("HY엽서M", Font.PLAIN, 12));
+		lblBrandName.setBackground(Color.WHITE);
 
 		MenuTab = new JTabbedPane(JTabbedPane.TOP);
 		NorthPane.setLayout(new GridLayout(0, 1, 0, 0));
@@ -237,11 +249,14 @@ public class Table_orderView extends JFrame implements ActionListener {
 		MenuTab.addTab("초밥류", scrollPane_1);
 		MenuTab.addTab("식사류", scrollPane_2);
 		MenuTab.addTab("주류", scrollPane_3);
+		MenuTab.setFont(new Font("HY엽서M", Font.PLAIN, 15));
+		MenuTab.setBackground(Color.white);
 
 		
 		
 		//중앙 우측 상단 (테이블 번호 보여주는 라벨) 
-		lblOrderList = new JLabel("##번 테이블 주문내역");
+		lblOrderList = new JLabel("★"+tableNo+"번 테이블 주문내역"+"★");
+		lblOrderList.setFont(new Font("HY엽서M", Font.PLAIN, 18));
 		TablePanel_North.add(lblOrderList);
 		
 		
@@ -255,23 +270,43 @@ public class Table_orderView extends JFrame implements ActionListener {
 
 		
 		scrollPaneOrderTable = new JScrollPane(tableMenu);
+			//ScrollPane 디자인
+		scrollPaneOrderTable.setOpaque(false);
+		scrollPaneOrderTable.getViewport().setOpaque(false);;
+		
+		
 		scrollPaneOrderHistoryTable = new JScrollPane(orderHistoryTable);
+		scrollPaneOrderHistoryTable.setBackground(new Color(0, 153, 255));
+			//ScrollPane 디자인
+		scrollPaneOrderHistoryTable.setOpaque(false);
+		scrollPaneOrderHistoryTable.getViewport().setOpaque(false);;
+		
 		
 		scrollPaneOrderHistoryTable.setPreferredSize(new Dimension(200,270));
 		scrollPaneOrderTable.setPreferredSize(new Dimension(200,190));
 		
 		TablePanel_Center.setLayout(new BorderLayout(0, 0));
 		TablePanel_Center.add(scrollPaneOrderHistoryTable, BorderLayout.NORTH);
-		TablePanel_Center.add(new JLabel("------------------------------------------"
-				+ "추가 주문"
-				+ "------------------------------------------"), BorderLayout.CENTER);
+
+		JLabel label = new JLabel("추가주문");
+		
+		//추가주문 라벨 디자인
+		label.setFont(new Font("HY엽서M", Font.PLAIN, 15));
+		label.setBackground(new Color(235,235,235));
+		label.setOpaque(true);
+		label.setHorizontalAlignment(SwingConstants.CENTER);	//가운데정렬
+		
+		TablePanel_Center.add(label, BorderLayout.CENTER);
 		TablePanel_Center.add(scrollPaneOrderTable, BorderLayout.SOUTH);
 
 
 		//중앙 우측 하단 (버튼 )
 		addBtn = new JButton("품목추가");
+		addBtn.setFont(new Font("HY엽서M", Font.PLAIN, 15));
 		deleteBtn = new JButton("품목삭제");
+		deleteBtn.setFont(new Font("HY엽서M", Font.PLAIN, 15));
 		paymentBtn = new JButton("결제");
+		paymentBtn.setFont(new Font("HY엽서M", Font.PLAIN, 15));
 		
 		Tablepanel.add(TablePanel_South, BorderLayout.SOUTH);
 
@@ -315,12 +350,17 @@ public class Table_orderView extends JFrame implements ActionListener {
 	//카테고리별 메뉴버튼 생성 및 패널에 부착
 	public void setMenuBtn(ArrayList<MenuVO> menuList, JButton[] btns, JPanel panel){
 		for (int i = 0; i < menuList.size(); i++) {
-			String menuName = menuList.get(i).getName();
+//			String menuName = menuList.get(i).getName();
 			String image 	= menuList.get(i).getImage();
 
-			btns[i] = new JButton(menuName, new ImageIcon(image));
+			btns[i] = new JButton(null, new ImageIcon(image));
 			btns[i].setPreferredSize(new Dimension(120, 130));
 			
+			//버튼 디자인
+			btns[i].setContentAreaFilled(false);
+			btns[i].setFocusPainted(false);
+//			btns[i].setBorderPainted(false);
+			//화면부착
 			panel.add(btns[i]);
 		}
 		
@@ -329,7 +369,12 @@ public class Table_orderView extends JFrame implements ActionListener {
 			for (int i = menuList.size() ; i < DEFAULT_MENU_PANEL_SIZE; i++) {
 				btns[i] = new JButton("EMPTY");
 				btns[i].setPreferredSize(new Dimension(120, 130));
+
+				//버튼 디자인
+				btns[i].setContentAreaFilled(false);
+				btns[i].setFocusPainted(false);
 				
+				//화면부착
 				panel.add(btns[i]);
 			}
 		}
@@ -339,8 +384,9 @@ public class Table_orderView extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object evt = e.getSource();
 		
-		if ( evt == paymentBtn ) payment();
-		else if ( evt == addBtn ){
+		if ( evt == paymentBtn ){
+			
+		}else if ( evt == addBtn ){
 			//makeOrderList(orderList) =>	orderList를 받아 OrderVO들로 구성된 orderVOList를 생성
 			addOrder(makeOrderList(orderList));		//orderVO로 구성된 ArrayList를 model을 통해 db에 추가(insert)
 			displayOrderHistory(customerNo);		//해당 주문이 적용된 sushi_order DB에서 다시 주문리스트를 받아옴
