@@ -61,6 +61,14 @@ class Table extends Thread{
 					Table_customerNo += customerModel.getCustomerNO(array[1]);
 					pw.println(Table_customerNo);
 					pw.flush();
+					switch(array[1]){
+					case "01":
+						store.storeMgt.isEating(array[1], true);
+					case "02":
+						store.storeMgt.isEating(array[1], true);
+					case "03":
+						store.storeMgt.isEating(array[1], true);
+					}
 					break;
 				case "Order":			// array[1] : OrderNo , array[2] : CustomerNo
 										// , array[3] : MenuCode, array[4] : PaymentNo, array[5] :Ordertime
@@ -71,7 +79,19 @@ class Table extends Thread{
 					orderVO.setOrdertime(array[5]);
 					orderVOList.add(orderVO);
 					addOrder(orderVOList);
+					
 					break;
+				case "OUT":
+					pw.println("Bye");
+					pw.flush();
+					switch(array[1]){
+					case "01":
+						store.storeMgt.isEating(array[1], false);
+					case "02":
+						store.storeMgt.isEating(array[1], false);
+					case "03":
+						store.storeMgt.isEating(array[1], false);
+					}
 				}
 				
 			}
