@@ -34,9 +34,7 @@ public class Table_orderView extends JFrame implements ActionListener {
 
 	
 	private String tableNo;
-	//test***************************************
-	private String customerNo = "02";
-//	private String customerNo;
+	private String customerNo;
 	
 	JPanel NorthPane, CenterPane, Tablepanel, TablePanel_South, paymentPanel, TablePanel_Center, TablePanel_North,
 			deletePanel;
@@ -65,14 +63,17 @@ public class Table_orderView extends JFrame implements ActionListener {
 	HashMap<MenuVO, Integer> orderListHashMap;	
 	
 
-	{
+	//sushi_store에서 테이블 클릭시, 테이블 번호와 함께 전달, Char(2)
+	public Table_orderView(String tableNo){
+		this.tableNo = tableNo;
+		
 		// 창크기 고정 180421 1332
 		setResizable(false);
 		dbConnection();
 
 		//customerNo를 DB에서 가져옴
 		customerNo = getCustomerNO(tableNo);
-		
+
 		// 전체 메뉴리스트를 db에서 불러오기
 		wholeMenuList = getMenuList();
 
@@ -84,21 +85,11 @@ public class Table_orderView extends JFrame implements ActionListener {
 		eventProc();
 		
 		//현재 주문list db에서 보여주기
-		//테스트 고객번호 : customerNo = "02";
 		displayOrderHistory(customerNo);
 
 		setVisible(true);
 		setSize(800, 600);
 //		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	}
-	
-	public Table_orderView() {
-	}
-
-	//sushi_store에서 테이블 클릭시, 테이블 번호와 함께 전달, Char(2)
-	public Table_orderView(String tableNo){
-		
-		this.tableNo = tableNo;
 	}
 	
 	void dbConnection() {
@@ -470,13 +461,14 @@ public class Table_orderView extends JFrame implements ActionListener {
 	//*****테스트 필요
 	//With DB
 	//고객이 테이블에 앉아 시작을 누르면 customer DB에 insert하여 customerNo를 받아옴
-	public void getCustomerNO(String tableNo){
+	public String getCustomerNO(String tableNo){
 		try {
 			customerNo = customerModel.getCustomerNO(tableNo);
 		} catch (Exception e) {
 			System.out.println("고객넘버 찾아오기 실패 : " + e.getMessage());
 			e.printStackTrace();
 		}
+		return customerNo;
 	}
 	
 
@@ -485,10 +477,6 @@ public class Table_orderView extends JFrame implements ActionListener {
 	public ArrayList<OrderVO> makeOrderList(ArrayList<MenuVO> orderList){
 		
 		ArrayList<OrderVO> orderVOList = new ArrayList<OrderVO>();
-		
-		
-		//임시 테스트 값
-		customerNo = "02";
 		
 		//입력받은 총 menu의 갯수만큼 수행
 		for (int i = 0; i < orderList.size(); i++) {

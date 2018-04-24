@@ -29,7 +29,7 @@ public class OrderModel {
 	//주문 입력
 	public void addOrder(OrderVO order){
 		String sql="INSERT INTO SUSHI_ORDER (ORDER_NO, CUSTOMER_NO, MENU_CODE, PAYMENT_NO, ORDERTIME ) "
-				+ "VALUES ( SQ_ORDER_NO.NEXTVAL,      			  ?,        ?, 		    ?,   SYSDATE ) ";
+				+ "VALUES ( SQ_ORDER_NO.NEXTVAL,      			  ?,        ?, 		    (?),   SYSDATE ) ";
 		
 		PreparedStatement ps;
 		
