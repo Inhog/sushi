@@ -12,6 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import sushistore.Sushi_Store;
+
 public class StoreMgtView extends JFrame implements ActionListener{
 
 	
@@ -28,7 +30,8 @@ public class StoreMgtView extends JFrame implements ActionListener{
 	
 	JDialog	 menuMgt;
 	
-	public StoreMgtView(){
+	
+	public StoreMgtView( ){
 		// JFrame 레이아웃 추가
 		addLayout();
 		
@@ -162,11 +165,11 @@ public class StoreMgtView extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		Object evt = e.getSource();
 		if(evt == bTable1){
-			new Table_orderView("01");
+			new Table_orderView("01",this);
 		}else if(evt == bTable2){
-			new Table_orderView("02");
+			new Table_orderView("02",this);
 		}else if(evt == bTable3){
-			new Table_orderView("03");
+			new Table_orderView("03",this);
 		}else if(evt == bStock){
 			if ( stock == null ) stock = new StockView();
 			stock.setVisible(true);

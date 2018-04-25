@@ -23,6 +23,7 @@ import javax.swing.table.AbstractTableModel;
 
 import model.MenuModel;
 import model.OrderModel;
+import sushistore.Sushi_Store;
 import model.CustomerModel;
 
 import vo.MenuVO;
@@ -36,8 +37,8 @@ public class Table_orderView extends JFrame implements ActionListener {
 	final int DEFAULT_MENU_PANEL_SIZE = MENU_ROW_SIZE * MENU_COL_SIZE ;
 
 	
-	private String tableNo;
-	private String customerNo;
+	String tableNo;
+	String customerNo;
 	
 	JPanel NorthPane, CenterPane, Tablepanel, TablePanel_South, paymentPanel, TablePanel_Center, TablePanel_North,
 			deletePanel;
@@ -65,11 +66,14 @@ public class Table_orderView extends JFrame implements ActionListener {
 	// 주문할 메뉴 리스트를 중복을 제거하여 표에 표시하기 위한 hashMap
 	HashMap<MenuVO, Integer> orderListHashMap;	
 	
+	// 메인화면에서 결제시 식사중텍스트를 바꾸기위한 객체선언
+	StoreMgtView storemgtview;
 
-	//sushi_store에서 테이블 클릭시, 테이블 번호와 함께 전달, Char(2)
-	public Table_orderView(String tableNo){
+	//sushi_store에서 테이블 클릭시, 테이블 번호와 함께 전달, Char(2), 부모 Sushi_Store객체도 함께 전달.
+	public Table_orderView(String tableNo,StoreMgtView storemgtview){
 		this.tableNo = tableNo;
-		
+		this.storemgtview = storemgtview;
+
 		// 창크기 고정 180421 1332
 		setResizable(false);
 		dbConnection();
@@ -384,7 +388,7 @@ public class Table_orderView extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object evt = e.getSource();
 		
-		if ( evt == paymentBtn ) new PaymentView(customerNo,this);
+		if ( evt == paymentBtn ) new PaymentView(customerNo,this,storemgtview);
 		else if ( evt == addBtn ){
 			//makeOrderList(orderList) =>	orderList를 받아 OrderVO들로 구성된 orderVOList를 생성
 			addOrder(makeOrderList(orderList));		//orderVO로 구성된 ArrayList를 model을 통해 db에 추가(insert)
@@ -662,7 +666,7 @@ public class Table_orderView extends JFrame implements ActionListener {
 	//나중에 sushi_store에 연동하고 주석처리하기.
 	//01번 테이블로 실행한 scene
 	public static void main(String[] args) {
-		new Table_orderView("01");
+//		new Table_orderView("01");
 	}
 	
 	public class OrderTableModel extends AbstractTableModel {

@@ -16,7 +16,7 @@ public class Customer2 extends JFrame{
 	public Customer2(){
 		try {
 			// Socket(IPaddress,Portno)
-			socket = new Socket("M150111", 10001);
+			socket = new Socket("M150112", 10001);
 
 			// 소켓통신에 output, input Stream을 정해준다.
 			pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(),"UTF-8"));

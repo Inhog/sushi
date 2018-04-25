@@ -435,4 +435,8 @@ public class orderView extends JFrame implements Runnable,ActionListener{
 			System.out.println("Run 메서드 실행 실패 : "+e.getMessage());
 		}
 	}
+	
+	public static void main(String[] agrs){
+		
+	}
 }

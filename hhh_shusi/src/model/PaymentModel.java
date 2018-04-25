@@ -46,7 +46,7 @@ public class PaymentModel {
 		return totalPrice;
 	}
 	
-	public void getPaymentNo(String totalPrice, String method){
+	public String getPaymentNo(String totalPrice, String method){
 		String sql = "INSERT INTO PAYMENT(PAYMENT_NO,TOTAL_PRICE,METHOD) VALUES (SQ_PAYMENT_NO.NEXTVAL,?,?)";
 		
 		try {
@@ -54,33 +54,33 @@ public class PaymentModel {
 			ps.setString(1, totalPrice);
 			ps.setString(2, method);
 			ps.executeQuery();
-			ps.close();
 		} catch (SQLException e) {
 			System.out.println("결제번호 생성실패: " +e.getMessage());
 		}
 
-
-	}
-	public void setPaymentNo(String CustomerNo) {
-		String sql2 = "SELECT SQ_PAYMENT_NO.CURRVAL FROM DUAL";
-		int SQ_PAYMENT_NO = 0;
+		sql = "SELECT SQ_PAYMENT_NO.CURRVAL PAYMENT_NO FROM DUAL";
+		String SQ_PAYMENT_NO = "";
+		
 		try {
-			ps = con.prepareStatement(sql2);
+			ps = con.prepareStatement(sql);
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()){
-				SQ_PAYMENT_NO = rs.getInt("CURRVAL");
+				SQ_PAYMENT_NO = rs.getString("PAYMENT_NO");
 			}
-			System.out.println(String.valueOf(SQ_PAYMENT_NO));
-			ps.close();
 		} catch (SQLException e1) {
 			System.out.println("시퀀스번호 생성 실패:"+e1.getMessage());
 		}
 		
+		return SQ_PAYMENT_NO;
+	}
+	public void setPaymentNo(String customerNo, String paymentNo) {
+		
 		String sql = "UPDATE SUSHI_ORDER SET PAYMENT_NO = ? WHERE CUSTOMER_NO =?";
 		try {
 			ps = con.prepareStatement(sql);
-			ps.setInt(1, SQ_PAYMENT_NO);
-			ps.setString(2, CustomerNo);
+			ps.setString(1, paymentNo);
+			ps.setString(2, customerNo);
+			
 			ps.executeUpdate();
 			ps.close();
 		} catch (Exception e) {

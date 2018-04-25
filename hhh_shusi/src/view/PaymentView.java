@@ -16,6 +16,9 @@ public class PaymentView extends JFrame implements ActionListener {
 	public PaymentModel paymentModel;
 	String customerNo,totalPrice;
 	Table_orderView table_orderView;
+	StoreMgtView storemgtview;
+	
+	String paymentNo;
 	
 	public void addLayout() {
 		getContentPane().setLayout(null);
@@ -25,7 +28,7 @@ public class PaymentView extends JFrame implements ActionListener {
 		getContentPane().add(panel_1);
 		panel_1.setLayout(null);
 
-		JLabel lbPaymentNum = new JLabel("결제번호");
+		JLabel lbPaymentNum = new JLabel("고객번호");
 		lbPaymentNum.setBounds(25, 25, 62, 18);
 		panel_1.add(lbPaymentNum);
 
@@ -84,9 +87,10 @@ public class PaymentView extends JFrame implements ActionListener {
 		tfReceiveCash.addActionListener(this);
 	}
 
-	public PaymentView(String customerNo,Table_orderView table_orderView) {
+	public PaymentView(String customerNo,Table_orderView table_orderView,StoreMgtView storemgtview) {
 		this.customerNo = customerNo;
 		this.table_orderView = table_orderView;
+		this.storemgtview = storemgtview;
 		connectDB();
 		getTotalPrice();
 		addLayout();
@@ -107,11 +111,11 @@ public class PaymentView extends JFrame implements ActionListener {
 		
 	}
 	public void getPaymentNo(String method){
-		paymentModel.getPaymentNo(totalPrice,method);
+		paymentNo = paymentModel.getPaymentNo(totalPrice,method);
 
 	}
 	public void setPaymentNo(){
-		paymentModel.setPaymentNo(customerNo);
+		paymentModel.setPaymentNo(customerNo, paymentNo);
 	}
 	
 	public void getTotalPrice(){
@@ -126,10 +130,11 @@ public class PaymentView extends JFrame implements ActionListener {
 			
 			tfReturnCash.setText(String.valueOf(IreceivePrice-ItotalPrice));
 			JOptionPane.showMessageDialog(null, "반환금액 : "+(IreceivePrice-ItotalPrice));
-			setPaymentNo();
 			getPaymentNo("현금");
+			setPaymentNo();
 			setVisible(false);
 			table_orderView.setVisible(false);
+			storemgtview.isEating(table_orderView.tableNo,false);
 
 		}else if(evt == btCardPayment){
 			int ItotalPrice = Integer.valueOf(tfTotalCash.getText());
@@ -138,11 +143,12 @@ public class PaymentView extends JFrame implements ActionListener {
 			} catch (Exception e) {
 				System.out.println("결제실패...:"+e.getMessage());
 			}
-			setPaymentNo();
 			getPaymentNo("카드");
+			setPaymentNo();
 			JOptionPane.showMessageDialog(null, "결제가 완료되었습니다.");
 			setVisible(false);
 			table_orderView.setVisible(false);
+			storemgtview.isEating(table_orderView.tableNo,false);
 
 		}
 	}
